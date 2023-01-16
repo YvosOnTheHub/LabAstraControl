@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: sc-san-svm2
+provisioner: csi.trident.netapp.io
+parameters:
+  backendType: "ontap-san"
+  storagePools: "svm2-san:aggr1_cluster3_02"
+  fsType: "ext4"
+mountOptions:
+   - discard
+allowVolumeExpansion: true

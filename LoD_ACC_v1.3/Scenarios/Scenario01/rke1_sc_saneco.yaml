@@ -1,0 +1,12 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: sc-san-eco-svm1
+provisioner: csi.trident.netapp.io
+parameters:
+  backendType: "ontap-san-economy"
+  storagePools: "svm1-san-eco:aggr1_cluster1_02"
+  fsType: "ext4"
+mountOptions:
+   - discard
+allowVolumeExpansion: true
