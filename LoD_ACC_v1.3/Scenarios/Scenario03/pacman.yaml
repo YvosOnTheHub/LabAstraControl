@@ -16,6 +16,21 @@ spec:
     requests:
       storage: 8Gi
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: mongo
+  name: mongo
+  namespace: pacman
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 27017
+      targetPort: 27017
+  selector:
+    name: mongo
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -34,7 +49,8 @@ spec:
         name: mongo
     spec:
       containers:
-      - image: mongo
+      - image: mongo:3.2
+        imagePullPolicy: IfNotPresent
         name: mongo
         ports:
         - name: mongo
@@ -82,6 +98,8 @@ spec:
     spec:
       containers:
       - image: registry.demo.netapp.com/pacman-nodejs-app:latest
+        #image: quay.io/ifont/pacman-nodejs-app:latest
+        imagePullPolicy: IfNotPresent
         name: pacman
         ports:
         - containerPort: 8080
