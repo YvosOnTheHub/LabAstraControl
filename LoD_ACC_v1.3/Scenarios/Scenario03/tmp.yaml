@@ -16,7 +16,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: storage-class-nas
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -98,7 +97,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: storage-class-nas
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -358,7 +356,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: storage-class-nas
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -440,7 +437,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: storage-class-nas
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -897,7 +893,6 @@ spec:
   resources:
     requests:
       storage: 1Gi
-  storageClassName: storage-class-nas
 ---
 apiVersion: apps/v1
 kind: Deployment
