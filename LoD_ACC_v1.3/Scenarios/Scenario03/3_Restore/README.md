@@ -19,7 +19,7 @@ connecting to: pacman
 
 As a great wise man would say: "oh oh !"  
 
-No worries, you did all necessary to protect your application.  
+No worries, you did all the necessary to protect your application.  
 In my case, I can simply perform an _in place restore_ operation from the first manual backup we took.  
 
 <p align="center"><img src="Images/2_in_place_restore.png" width="640"></p>
