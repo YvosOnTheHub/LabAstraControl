@@ -16,6 +16,7 @@ Scenarios
 [1.](LoD_ACC_v1.3/Scenarios/Scenario01) Configure the lab for iSCSI  
 [2.](LoD_ACC_v1.3/Scenarios/Scenario02) Astra Control and logging   
 [3.](LoD_ACC_v1.3/Scenarios/Scenario03) Pacman to the rescue !  
+4. Jenkins (_still in brain cells, work in progress_)
 
 Addendum
 --------
