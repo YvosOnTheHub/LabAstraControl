@@ -97,8 +97,8 @@ spec:
         name: pacman
     spec:
       containers:
-      - image: registry.demo.netapp.com/pacman-nodejs-app:latest
-        #image: quay.io/ifont/pacman-nodejs-app:latest
+      - image: quay.io/ifont/pacman-nodejs-app:latest
+        #image: registry.demo.netapp.com/pacman-nodejs-app:latest
         imagePullPolicy: IfNotPresent
         name: pacman
         ports:

@@ -1,3 +1,5 @@
+https://github.com/font/pacman
+
 git clone https://github.com/font/k8s-example-apps.git
 cd k8s-example-apps/pacman-nodejs-app
 
