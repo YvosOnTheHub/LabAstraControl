@@ -1,6 +1,5 @@
 # SCRIPT TO RUN ON THE JUMPHOST
 
-: <<'END'
 if [ $# -eq 0 ]
   then
     echo "No arguments supplied"
@@ -13,10 +12,11 @@ fi
 
 ACCOUNTID=$1
 APITOKEN=$2
-END
 
+: <<'END'
 ACCOUNTID="6912cacd-a03a-4f8f-85cb-713ef5253eff"
 APITOKEN="60BJzXpoYzpjRFclFyW94TzyTxi_lzVxZfvfNkMn1CU="
+END
 
 BUCKETID="72db9754-892e-4982-be42-4e6b4b32ec0d"
 RKE1ID="1ceedd15-f771-4f13-84ac-bf181148b202"
@@ -204,3 +204,8 @@ curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$
   -H 'accept: application/astra-appMirror+json' -H 'Content-Type: application/astra-appMirror+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-Pacman-Replication-Policy.json
+
+echo
+echo "###########################################################################"
+echo "# WAIT A FEW MINUTES FOR BOTH THE BACKUP & REPLICATION TO BE READY"
+echo "###########################################################################"
