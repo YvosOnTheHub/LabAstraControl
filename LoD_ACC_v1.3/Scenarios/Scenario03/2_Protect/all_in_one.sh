@@ -58,6 +58,7 @@ CREATEMONGODBHOOK=$(curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACC
 
 MONGODBHOOKID=$(echo $CREATEMONGODBHOOK | jq -r .id)
 
+: <<'END'
 echo
 echo "############################################"
 echo "# RETRIEVE PACMAN NAMESPACE'S ID"
@@ -67,6 +68,7 @@ PACMANNAMESPACE=$(curl -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID
   -H 'accept: application/json' -H "Authorization: Bearer $APITOKEN")
 
 PACMANNAMESPACEID=$(echo $PACMANNAMESPACE | jq -r .items[0][0])
+END
 
 echo
 echo "############################################"
@@ -85,10 +87,11 @@ EOF
 
 PACMANAPP=$(curl -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
   -H 'accept: application/astra-app+json' -H 'Content-Type: application/astra-app+json' \
-  -H "Authorization: Bearer $APITOKEN" \ 
+  -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-Pacman-Manage.json)
 
-PACMANAPPID=$(echo $PACMANAPP | jq -r .id])
+PACMANAPPID=$(echo $PACMANAPP | jq -r .id)
+
 
 echo
 echo "############################################"
@@ -104,14 +107,14 @@ PACMANSNAP=$(curl -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s
   "version": "1.1"
 }')
 
-PACMANSNAPID=$(echo $PACMANSNAP | jq -r .id])
+PACMANSNAPID=$(echo $PACMANSNAP | jq -r .id)
 
 PACMANSNAPSTATE="UNKNOWN"
 until [ $PACMANSNAPSTATE = 'completed' ]; do
   PACMANSNAPGET=$(curl -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appSnaps/$PACMANSNAPID" \
   -H 'accept: application/astra-appSnap+json' -H "Authorization: Bearer $APITOKEN")
 
-  PACMANSNAPSTATE=$(echo $PACMANSNAPGET | jq -r .state])
+  PACMANSNAPSTATE=$(echo $PACMANSNAPGET | jq -r .state)
   sleep 5
 done;
 
@@ -135,14 +138,14 @@ PACMANBKP=$(curl -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-Pacman-onDemand-Backup.json)
 
-PACMANBKPID=$(echo $PACMANBKP | jq -r .id])
+PACMANBKPID=$(echo $PACMANBKP | jq -r .id)
 
 PACMANBKPSTATE="UNKNOWN"
 until [ $PACMANSNAPSTATE = 'completed' ]; do
   PACMANBKPGET=$(curl -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appBackups/$PACMANBKPID" \
   -H 'accept: application/astra-appBackup+json' -H "Authorization: Bearer $APITOKEN")
 
-  PACMANBKPSTATE=$(echo $PACMANBKPGET | jq -r .state])
+  PACMANBKPSTATE=$(echo $PACMANBKPGET | jq -r .state)
   sleep 5
 done;
 
