@@ -30,8 +30,8 @@ echo "############################################"
 echo "# UNMANAGE NETAPP-ACC"
 echo "############################################"
 
-curl -X 'DELETE' 'https://astra.demo.netapp.com/accounts/$ACCOUNTID//k8s/v2/apps/a3c793aa-ee99-4098-b4f8-8fe86f9b2c74' \
-  -H 'accept: */*' -H 'Authorization: Bearer $APITOKEN'
+curl -k -X DELETE "https://astra.demo.netapp.com/accounts/$ACCOUNTID//k8s/v2/apps/a3c793aa-ee99-4098-b4f8-8fe86f9b2c74" \
+  -H 'accept: */*' -H "Authorization: Bearer $APITOKEN"
 
 echo
 echo "############################################"
@@ -85,7 +85,7 @@ cat > CURL-ACC-Pacman-Manage.json << EOF
 }
 EOF
 
-PACMANAPP=$(curl -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
+PACMANAPP=$(curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
   -H 'accept: application/astra-app+json' -H 'Content-Type: application/astra-app+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-Pacman-Manage.json)
@@ -98,7 +98,7 @@ echo "############################################"
 echo "# CREATE AN ON-DEMAND SNAPSHOT FOR PACMAN"
 echo "############################################"
 
-PACMANSNAP=$(curl -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appSnaps" \
+PACMANSNAP=$(curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appSnaps" \
   -H 'accept: application/astra-appSnap+json' -H 'Content-Type: application/astra-appSnap+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d '{
@@ -133,7 +133,7 @@ cat > CURL-ACC-Pacman-onDemand-Backup.json << EOF
 }
 EOF
 
-PACMANBKP=$(curl -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appBackups" \
+PACMANBKP=$(curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appBackups" \
   -H 'accept: application/astra-appBackup+json' -H 'Content-Type: application/astra-appBackup+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-Pacman-onDemand-Backup.json)
@@ -141,8 +141,8 @@ PACMANBKP=$(curl -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/
 PACMANBKPID=$(echo $PACMANBKP | jq -r .id)
 
 PACMANBKPSTATE="UNKNOWN"
-until [ $PACMANSNAPSTATE = 'completed' ]; do
-  PACMANBKPGET=$(curl -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appBackups/$PACMANBKPID" \
+until [ $PACMANBKPSTATE = 'completed' ]; do
+  PACMANBKPGET=$(curl -k -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appBackups/$PACMANBKPID" \
   -H 'accept: application/astra-appBackup+json' -H "Authorization: Bearer $APITOKEN")
 
   PACMANBKPSTATE=$(echo $PACMANBKPGET | jq -r .state)
@@ -168,7 +168,7 @@ cat > CURL-ACC-Pacman-Protection-Policy.json << EOF
 }
 EOF
 
-curl -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/schedules" \
+curl -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/schedules" \
   -H 'accept: application/astra-schedule+json' -H 'Content-Type: application/astra-schedule+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-Pacman-Protection-Policy.json
