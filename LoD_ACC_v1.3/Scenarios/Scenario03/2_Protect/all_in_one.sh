@@ -22,15 +22,17 @@ BUCKETID="72db9754-892e-4982-be42-4e6b4b32ec0d"
 RKE1ID="1ceedd15-f771-4f13-84ac-bf181148b202"
 RKE2ID="1a18ac44-0057-47e3-a2ee-09f3cd61ab05"
 
+: <<'END'
 sudo apt install -y jq
 sudo rm -f 'google-chrome.list'$'\r'
+END
 
 echo
 echo "############################################"
 echo "# UNMANAGE NETAPP-ACC"
 echo "############################################"
 
-curl -k -X DELETE "https://astra.demo.netapp.com/accounts/$ACCOUNTID//k8s/v2/apps/a3c793aa-ee99-4098-b4f8-8fe86f9b2c74" \
+curl -k -X DELETE "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps/a3c793aa-ee99-4098-b4f8-8fe86f9b2c74" \
   -H 'accept: */*' -H "Authorization: Bearer $APITOKEN"
 
 echo
@@ -115,6 +117,7 @@ until [ $PACMANSNAPSTATE = 'completed' ]; do
   -H 'accept: application/astra-appSnap+json' -H "Authorization: Bearer $APITOKEN")
 
   PACMANSNAPSTATE=$(echo $PACMANSNAPGET | jq -r .state)
+  echo "------ WAITNG FOR THE SNAPSHOT TO BE READY ------"
   sleep 5
 done;
 
@@ -127,7 +130,7 @@ echo "############################################"
 cat > CURL-ACC-Pacman-onDemand-Backup.json << EOF
 {
   "name": "pacman-ondemand-bakp1",
-  "type": "application/astra-appSnap",
+  "type": "application/astra-appBackup",
   "snapshotID": "$PACMANSNAPID",
   "version": "1.1"
 }
@@ -140,6 +143,7 @@ PACMANBKP=$(curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k
 
 PACMANBKPID=$(echo $PACMANBKP | jq -r .id)
 
+: <<'END'
 PACMANBKPSTATE="UNKNOWN"
 until [ $PACMANBKPSTATE = 'completed' ]; do
   PACMANBKPGET=$(curl -k -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appBackups/$PACMANBKPID" \
@@ -148,7 +152,7 @@ until [ $PACMANBKPSTATE = 'completed' ]; do
   PACMANBKPSTATE=$(echo $PACMANBKPGET | jq -r .state)
   sleep 5
 done;
-
+END
 
 echo
 echo "############################################"
@@ -187,10 +191,10 @@ cat > CURL-ACC-Pacman-Replication-Policy.json << EOF
   ],
   "sourceAppID": "$PACMANAPPID",
   "stateDesired": "established",
-  "storageClasses": [
+  "storageClasses": [{
     "clusterID": "$RKE1ID",
     "storageClassName": "sc-nas-svm1"
-    ],
+    }],
   "type": "application/astra-appMirror",
   "version": "1.0"
 }
