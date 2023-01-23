@@ -174,27 +174,29 @@ curl -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/
   -d @CURL-ACC-Pacman-Protection-Policy.json
 
 echo
-echo "############################################"
-echo "# CREATE A REPLICATION POLICY FOR PACMAN"
-echo "############################################"
+echo "#######################################################"
+echo "# CREATE A REPLICATION POLICY FOR PACMAN (RKE2=>RKE1)"
+echo "#######################################################"
 
 cat > CURL-ACC-Pacman-Replication-Policy.json << EOF
 {
-  "destinationClusterID": "$RKE2ID",
+  "destinationClusterID": "$RKE1ID",
+  "namespaceMapping": [
+    { "clusterID": "$RKE2ID", "namespaces": ["pacman"] },
+    { "clusterID": "$RKE1ID", "namespaces": ["pacman-drp"] }
+  ],
   "sourceAppID": "$PACMANAPPID",
   "stateDesired": "established",
   "storageClasses": [
-    "clusterID": "$RKE2ID",
-    "storageClassName": "sc-nas-svm2"
+    "clusterID": "$RKE1ID",
+    "storageClassName": "sc-nas-svm1"
     ],
   "type": "application/astra-appMirror",
   "version": "1.0"
 }
 EOF
 
-: <<'END'
-curl -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appMirrors" \
+curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$PACMANAPPID/appMirrors" \
   -H 'accept: application/astra-appMirror+json' -H 'Content-Type: application/astra-appMirror+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-Pacman-Replication-Policy.json
-END
