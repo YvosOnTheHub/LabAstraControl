@@ -28,10 +28,12 @@ echo "# - Chronyd (ntpd)"
 echo "# - Firewalld"
 echo "##########################"
 
+if ! grep user_agent /etc/dnf/dnf.conf ; then
 sed -i '/gpgcheck/s/1/0/' /etc/dnf/dnf.conf
 cat <<EOT >> /etc/dnf/dnf.conf
 user_agent=curl/7.61.1
 EOT
+fi
 
 dnf install -y java-1.8.0-openjdk
 java -version

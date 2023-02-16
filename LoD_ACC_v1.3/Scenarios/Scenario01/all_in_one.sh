@@ -4,13 +4,16 @@ echo "##########################################################################
 echo "UPDATING RKE1 ISCSI CONFIG"
 echo "#######################################################################################################"
 echo
+i=0
 hosts=( "cp1.rke1" "cp2.rke1" "worker1.rke1" "worker2.rke1" "worker3.rke1")
 for host in "${hosts[@]}"
 do
   ssh -o "StrictHostKeyChecking no" root@$host -t "sed -i 's/^\(node.session.scan\).*/\1 = manual/' /etc/iscsi/iscsid.conf"
   ssh -o "StrictHostKeyChecking no" root@$host -t "sed -i '2 a \    find_multipaths no' /etc/multipath.conf"
+  ssh -o "StrictHostKeyChecking no" root@$host -t "sed -i /iqn/s/.$/$i/ /etc/iscsi/initiatorname.iscsi"
   ssh -o "StrictHostKeyChecking no" root@$host -t "systemctl restart iscsid"
   ssh -o "StrictHostKeyChecking no" root@$host -t "systemctl restart multipathd"
+  i=$((i+1))
 done
 
 
@@ -23,8 +26,10 @@ for host in "${hosts[@]}"
 do
   ssh -o "StrictHostKeyChecking no" root@$host -t "sed -i 's/^\(node.session.scan\).*/\1 = manual/' /etc/iscsi/iscsid.conf"
   ssh -o "StrictHostKeyChecking no" root@$host -t "sed -i '2 a \    find_multipaths no' /etc/multipath.conf"
+  ssh -o "StrictHostKeyChecking no" root@$host -t "sed -i /iqn/s/.$/$i/ /etc/iscsi/initiatorname.iscsi"
   ssh -o "StrictHostKeyChecking no" root@$host -t "systemctl restart iscsid"
   ssh -o "StrictHostKeyChecking no" root@$host -t "systemctl restart multipathd"
+  i=$((i+1))
 done
 
 echo "#######################################################################################################"
