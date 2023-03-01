@@ -34,18 +34,23 @@ sed -i '2 a \    find_multipaths no' /etc/multipath.conf
 ```
 
 - _/etc/iscsi/initiatorname.iscsi_ (Host IQN)
-Change the last character of the IQN **on each node** to reflect uniqueness.  
-in the following command _$i_ must be unique to each host.
+Change initiator name **on each node** to reflect uniqueness.  
 
 ```bash
-sed -i /iqn/s/.$/$i/ /etc/iscsi/initiatorname.iscsi
+echo "InitiatorName=`/sbin/iscsi-iname`" > /etc/iscsi/initiatorname.iscsi
 ```
 
-- finally, restart both services  
+- restart both services  
 
 ```bash
 systemctl restart iscsid
 systemctl restart multipathd
+```
+
+- finally, restart the Trident DaemonSet in order for Trident to take into account the changes
+
+```bash
+kubectl get -n trident po -l app=node.csi.trident.netapp.io -o name | xargs kubectl delete -n trident
 ```
 
 There you go, after having done that on all 10 nodes of this lab, you can move on to the next paragraph.  

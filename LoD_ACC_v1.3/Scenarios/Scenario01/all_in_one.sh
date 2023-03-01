@@ -16,6 +16,9 @@ do
   i=$((i+1))
 done
 
+rke1
+kubectl get -n trident po -l app=node.csi.trident.netapp.io -o name | xargs kubectl delete -n trident
+
 
 echo "#######################################################################################################"
 echo "UPDATING RKE2 ISCSI CONFIG"
@@ -31,6 +34,10 @@ do
   ssh -o "StrictHostKeyChecking no" root@$host -t "systemctl restart multipathd"
   i=$((i+1))
 done
+
+rke2
+kubectl get -n trident po -l app=node.csi.trident.netapp.io -o name | xargs kubectl delete -n trident
+
 
 echo "#######################################################################################################"
 echo "CONFIGURE iSCSI on CLUSTER1 (SVM 'SVM1')"
