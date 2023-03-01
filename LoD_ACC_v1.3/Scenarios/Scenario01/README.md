@@ -33,7 +33,7 @@ Enforce  the use of multipathing configuration
 sed -i '2 a \    find_multipaths no' /etc/multipath.conf
 ```
 
-- _/etc/iscsi/initiatorname.iscsi_ (Host IQN)
+- _/etc/iscsi/initiatorname.iscsi_ (Host IQN)  
 Change initiator name **on each node** to reflect uniqueness.  
 
 ```bash
