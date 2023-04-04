@@ -159,6 +159,10 @@ EOT
 sudo systemctl start td-agent.service
 ```
 
+<!-- ICONS
+logs: /var/log/td-agent/td-agent.log
+-->
+
 ## E. Configure Astra Control to send its logs to td-agent.
 
 This can be done in the GUI or REST API.  

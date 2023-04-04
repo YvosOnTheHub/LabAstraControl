@@ -128,7 +128,7 @@ echo "##########################################################################
 echo
 
 rke2
-tridentctl -n trident create backend -f rke2_trident_svm1_san_backend.json
-tridentctl -n trident create backend -f rke2_trident_svm1_san_eco_backend.json
+tridentctl -n trident create backend -f rke2_trident_svm2_san_backend.json
+tridentctl -n trident create backend -f rke2_trident_svm2_san_eco_backend.json
 kubectl create -f rke2_sc_san.yaml
 kubectl create -f rke2_sc_saneco.yaml
