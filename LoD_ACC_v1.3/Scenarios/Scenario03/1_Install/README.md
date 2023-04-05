@@ -41,4 +41,39 @@ Time to have fun, play a few games & enter some names for the high scores.
 In my case, I have:
 <p align="center"><img src="Images/3_pacman_scores.png" width="512"></p>
 
+You can also check that the highscores have been properly entered in the database with the following command:
+```bash
+$ kubectl exec -it -n pacman $(kubectl get pod -n pacman -l "name=mongo" -o name) -- mongo --eval 'db.highscore.find().pretty()' pacman
+MongoDB shell version: 3.2.21
+connecting to: pacman
+{
+	"_id" : ObjectId("642d49034b50670012f4fef8"),
+	"name" : "KATOS",
+	"cloud" : "unknown",
+	"zone" : "unknown",
+	"host" : "unknown",
+	"score" : 1530,
+	"level" : 1,
+	"date" : "Thu Jan 05 2023 10:10:11 GMT+0000 (UTC)",
+	"referer" : "http://192.168.0.232/",
+	"user_agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+	"hostname" : "192.168.0.232",
+	"ip_addr" : "::ffff:192.168.0.223"
+}
+{
+	"_id" : ObjectId("642d59284b50670012f4fef9"),
+	"name" : "yvos",
+	"cloud" : "unknown",
+	"zone" : "unknown",
+	"host" : "unknown",
+	"score" : 1250,
+	"level" : 1,
+	"date" : "Thu Jan 05 2023 11:19:04 GMT+0000 (UTC)",
+	"referer" : "http://192.168.0.232/",
+	"user_agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+	"hostname" : "192.168.0.232",
+	"ip_addr" : "::ffff:192.168.0.223"
+}
+```
+
 Now that some scores are saved on the database, you can proceed with managing the app with [Astra Control](../2_Protect)
