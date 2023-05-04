@@ -24,3 +24,4 @@ Scenarios
 Addendum
 --------
 [1.](LoD_ACC_v1.3/Addendum/Addenda01) How to use Astra Control's REST API
+[2.](LoD_ACC_v1.3/Addendum/Addenda02) Upgrade ACC to v23.04
