@@ -39,7 +39,7 @@ persistentvolumeclaim/data-wptoolkit-mariadb-0   Bound    pvc-2312becd-64f1-4cb8
 persistentvolumeclaim/wptoolkit-wordpress        Bound    pvc-affb8f16-23d9-4971-914b-bd0f8e44d63c   10Gi       RWO            sc-nas-svm2    2m2s
 ```
 Wordpress can be accessed with the address 192.168.0.231, IP retrieved from the local load balancer.  
-Note that you can also deploy a helm chart with the toolkit, granted you will need to configure the kubconfig to do so.  
+Note that you can also deploy a helm chart with the toolkit, granted you will need to configure the kubeconfig file to do so.  
 
 Let's retrieve the RKE ID that are necessary for the next steps:
 ```bash
@@ -67,7 +67,7 @@ $ actoolkit get apps -c rke2
 If you connect to the ACC GUI, you can verify that this wordpress instance is now managed by ACC.  
 Note also the _id_ of this app returned by the toolkit, you will need it in the following steps.  
 
-Before defining a protection policy, we first need to configure the Pre- and Post-snapshot hooks in order to get application consistant snapshots. The very first step will be to locally clone the existing hooks available on NetApp's GitHub (repo: _Verda_), followed by the upload of the MariaDB scripts in Astra Control and finally the hooks configuration for Wordpress:
+Before defining a protection policy, we first need to configure the Pre- and Post-snapshot hooks in order to get application consistent snapshots. The very first step will be to locally clone the existing hooks available on NetApp's GitHub (repo: _Verda_), followed by the upload of the MariaDB scripts in Astra Control and finally the hooks'configuration for Wordpress:
 ```bash
 $ git clone https://github.com/NetApp/Verda
 
@@ -117,7 +117,7 @@ $ actoolkit get protections -a 233cf400-9c37-4ea0-869c-b0efb51c4c99
 
 Again, if you log in the GUI, you can see these changes.  
 
-Creating a Replication policy is a piece of cake.  
+Creating a Replication policy is also a piece of cake.  
 ```bash
 $ actoolkit create replication 233cf400-9c37-4ea0-869c-b0efb51c4c99 -c 1ceedd15-f771-4f13-84ac-bf181148b202 -n wptoolkitdr -s sc-nas-svm1 -f 5m -o 02
 
@@ -161,5 +161,9 @@ $ actoolkit list apps
 ```
 
 Tadaa!  
-In the GUI, you can now see the following in order to prove that all went well:  
+In the GUI, you can now see the following in order to prove that all went well. We have:
+- a fully protected Wordpress
+- its DR configured on the second RKE cluster
+- a clone on the same cluster
+ 
 <p align="center"><img src="Images/1_ACC_Apps_Final.png" width="768"></p>
