@@ -16,7 +16,7 @@ do
   i=$((i+1))
 done
 
-rke1
+export KUBECONFIG=/root/kubeconfigs/rke1/kube_config_cluster.yml
 kubectl get -n trident po -l app=node.csi.trident.netapp.io -o name | xargs kubectl delete -n trident
 
 
@@ -35,7 +35,7 @@ do
   i=$((i+1))
 done
 
-rke2
+export KUBECONFIG=/root/kubeconfigs/rke2/kube_config_cluster.yml
 kubectl get -n trident po -l app=node.csi.trident.netapp.io -o name | xargs kubectl delete -n trident
 
 
@@ -116,7 +116,7 @@ echo
 
 [ ! -f "/root/trident-installer/tridentctl" ] && cp /root/trident-installer/tridentctl /usr/bin
 
-rke1
+export KUBECONFIG=/root/kubeconfigs/rke1/kube_config_cluster.yml
 tridentctl -n trident create backend -f rke1_trident_svm1_san_backend.json
 tridentctl -n trident create backend -f rke1_trident_svm1_san_eco_backend.json
 kubectl create -f rke1_sc_san.yaml
@@ -127,7 +127,7 @@ echo "ADD NEW TRIDENT BACKENDS & SC ON RKE2"
 echo "#######################################################################################################"
 echo
 
-rke2
+export KUBECONFIG=/root/kubeconfigs/rke2/kube_config_cluster.yml
 tridentctl -n trident create backend -f rke2_trident_svm2_san_backend.json
 tridentctl -n trident create backend -f rke2_trident_svm2_san_eco_backend.json
 kubectl create -f rke2_sc_san.yaml

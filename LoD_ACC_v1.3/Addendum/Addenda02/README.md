@@ -51,7 +51,7 @@ done
 ```
 
 The next step is about customizing the updated ACC Operator.  
-For the update to be succesful, the most important parameters to modify are:
+For the update to be successful, the most important parameters to modify are:
 - image registry
 - image registry secret
 
