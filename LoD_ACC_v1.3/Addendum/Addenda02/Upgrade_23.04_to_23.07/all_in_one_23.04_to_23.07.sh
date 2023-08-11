@@ -60,7 +60,8 @@ sed -i s,ACCOP_HELM_INSTALLTIMEOUT,ACCOP_HELM_UPGRADETIMEOUT, astra_control_cent
 sed -i s,'value: 5m','value: 300m', astra_control_center_operator_deploy.yaml
 sed -i 's/imagePullSecrets: \[]/imagePullSecrets:/' astra_control_center_operator_deploy.yaml
 sed -i '/imagePullSecrets/a \ \ \ \ \ \ - name: astra-registry-cred' astra_control_center_operator_deploy.yaml
-rke1
+
+export KUBECONFIG=/root/kubeconfigs/rke1/kube_config_cluster.yml
 kubectl apply -f astra_control_center_operator_deploy.yaml
 sleep 20
 
