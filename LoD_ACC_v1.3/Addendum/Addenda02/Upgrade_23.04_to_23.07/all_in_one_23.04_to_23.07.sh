@@ -2,31 +2,30 @@
 # SCRIPT TO RUN ON HELPER1
 
 # to run on the jumphost once the ACC package is downloaded
-# scp -p ~/Downloads/astra-control-center-23.04.0-22.tar.gz helper1:~/tarballs/
+# scp -p ~/Downloads/astra-control-center-23.07.0-25.tar.gz helper1:~/tarballs/
 
 
 echo "##########################"
 echo "# Check ACC package"
 echo "##########################"
-FILE=~/tarballs/astra-control-center-23.04.0-22.tar.gz
+FILE=~/tarballs/astra-control-center-23.07.0-25.tar.gz
 if [ ! -f "$FILE" ]; then
-    echo "Please download and transfer the ACC 23.04 package on the Helper1 host(folder 'tarball') before moving on."
+    echo "Please download and transfer the ACC 23.07 package on the Helper1 host(folder 'tarball') before moving on."
     exit 0
 fi
 
 echo "##########################"
 echo "# Pre-work"
 echo "##########################"
-rm -f ~/tarballs/astra-control-center-21*.tar.gz
-rm -f ~/tarballs/astra-control-center-22*.tar.gz
+rm -f ~/tarballs/astra-control-center-23.04*.tar.gz
 rm -f ~/tarballs/trident*.tar.gz
 rm -rf ~/acc/images
-mv ~/acc ~/acc_22.11
+mv ~/acc ~/acc_23.04
 
 echo "##########################"
 echo "# Untar ACC package"
 echo "##########################"
-tar -zxvf ~/tarballs/astra-control-center-23.04.0-22.tar.gz
+tar -zxvf ~/tarballs/astra-control-center-23.07.0-25.tar.gz
 
 echo
 echo "##########################"
@@ -36,7 +35,7 @@ podman login -u registryuser -p Netapp1! registry.demo.netapp.com
 
 export REGISTRY=registry.demo.netapp.com
 export PACKAGENAME=acc
-export PACKAGEVERSION=23.04.0-22
+export PACKAGEVERSION=23.07.0-25
 export DIRECTORYNAME=acc
 
 for astraImageFile in $(ls ${DIRECTORYNAME}/images/*.tar) ; do
@@ -82,8 +81,8 @@ echo "############################"
 
 kubectl -n netapp-acc patch acc/astra --type=json -p='[ 
     {"op":"add", "path":"/spec/crds", "value":{"shouldUpgrade": true}},
-    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/23.04.0-22"},
-    {"op":"replace", "path":"/spec/astraVersion","value":"23.04.0-22"}
+    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/23.07.0-25"},
+    {"op":"replace", "path":"/spec/astraVersion","value":"23.07.0-25"}
 ]'
 sleep 60
 
@@ -267,6 +266,10 @@ podman image rm localhost/aggregate-job:1.0.0
 podman image rm localhost/vcenter-job:1.0.0
 podman image rm localhost/kube-rbac-proxy:v0.5.0
 
+echo
+echo "############################"
+echo "# upgrade finished on:"; date
+echo "############################"
 
 
 if [[  $(more ~/.bashrc | grep kedit | wc -l) -eq 0 ]];then
@@ -291,9 +294,3 @@ EOT
 
   source ~/.bashrc
 fi
-
-echo
-echo "############################"
-echo "# upgrade finished on:"; date
-echo "############################"
-
