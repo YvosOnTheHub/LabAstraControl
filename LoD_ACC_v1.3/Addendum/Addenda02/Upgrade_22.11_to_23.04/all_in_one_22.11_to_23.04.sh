@@ -2,13 +2,13 @@
 # SCRIPT TO RUN ON HELPER1
 
 # to run on the jumphost once the ACC package is downloaded
-# scp -p ~/Downloads/astra-control-center-23.04.0-22.tar.gz helper1:~/tarballs/
+# scp -p ~/Downloads/astra-control-center-23.04.2-7.tar.gz helper1:~/tarballs/
 
 
 echo "##########################"
 echo "# Check ACC package"
 echo "##########################"
-FILE=~/tarballs/astra-control-center-23.04.0-22.tar.gz
+FILE=~/tarballs/astra-control-center-23.04.2-7.tar.gz
 if [ ! -f "$FILE" ]; then
     echo "Please download and transfer the ACC 23.04 package on the Helper1 host(folder 'tarball') before moving on."
     exit 0
@@ -26,7 +26,7 @@ mv ~/acc ~/acc_22.11
 echo "##########################"
 echo "# Untar ACC package"
 echo "##########################"
-tar -zxvf ~/tarballs/astra-control-center-23.04.0-22.tar.gz
+tar -zxvf ~/tarballs/astra-control-center-23.04.2-7.tar.gz
 
 echo
 echo "##########################"
@@ -36,7 +36,7 @@ podman login -u registryuser -p Netapp1! registry.demo.netapp.com
 
 export REGISTRY=registry.demo.netapp.com
 export PACKAGENAME=acc
-export PACKAGEVERSION=23.04.0-22
+export PACKAGEVERSION=23.04.2-7
 export DIRECTORYNAME=acc
 
 for astraImageFile in $(ls ${DIRECTORYNAME}/images/*.tar) ; do
@@ -83,8 +83,8 @@ echo "############################"
 
 kubectl -n netapp-acc patch acc/astra --type=json -p='[ 
     {"op":"add", "path":"/spec/crds", "value":{"shouldUpgrade": true}},
-    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/23.04.0-22"},
-    {"op":"replace", "path":"/spec/astraVersion","value":"23.04.0-22"}
+    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/23.04.2-7"},
+    {"op":"replace", "path":"/spec/astraVersion","value":"23.04.2-7"}
 ]'
 sleep 60
 

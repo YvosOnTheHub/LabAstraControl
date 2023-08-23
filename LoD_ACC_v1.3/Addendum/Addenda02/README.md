@@ -6,8 +6,8 @@ This lab run Astra Control Center v22.11.
 Currently, Astra Control needs to be upgraded from one version to the next.  
 
 You will find in this chapter procedures to:  
-[1.](Upgrade_22.11_to_23.04) upgrade ACC from 22.11 to 23.04  
-[2.](Upgrade_23.04_to_23.07) upgrade ACC from 23.04 to 23.07  
+[1.](Upgrade_22.11_to_23.04) upgrade ACC from 22.11 to 23.04.2  
+[2.](Upgrade_23.04_to_23.07) upgrade ACC from 23.04.2 to 23.07.0  
 
 Astra Control Center 23.04 introduces the following features:  
 - evaluation mode included in ACC  

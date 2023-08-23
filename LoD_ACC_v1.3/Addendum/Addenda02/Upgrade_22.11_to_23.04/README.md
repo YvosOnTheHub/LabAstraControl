@@ -3,13 +3,13 @@
 #########################################################################################
 
 This lab run Astra Control Center v22.11.  
-Let's go through the process to upgrade ACC to v23.04. The procedure can be found on this [link](https://docs.netapp.com/us-en/astra-control-center-2304/use/upgrade-acc.html).  
+Let's go through the process to upgrade ACC to v23.04.2 The procedure can be found on this [link](https://docs.netapp.com/us-en/astra-control-center-2304/use/upgrade-acc.html).  
 
 The first step would be to locally download the Astra Control 4GB package, which can be found on this [link](https://mysupport.netapp.com/site/products/all/details/astra-control-center/downloads-tab). By default, it will be saved in the _Downloads_ folder on the lab jumphost.  
 
 You then need to transfer this file from the _jumphost_ to the host where the commands need to run (_helper1_), in the _tarballs_ folder:
 ```bash
-scp -p ~/Downloads/astra-control-center-23.04.0-22.tar.gz helper1:~/tarballs/
+scp -p ~/Downloads/astra-control-center-23.04.2-7.tar.gz helper1:~/tarballs/
 ```
 
 You can now go through each step manually, or use the _all_in_one.sh_ script available on this github repository.  
@@ -26,7 +26,7 @@ rm -rf ~/acc/images
 Next, we can decompress the ACC package:
 ```bash
 mv ~/acc ~/acc_22.11
-tar -zxvf ~/tarballs/astra-control-center-23.04.0-22.tar.gz
+tar -zxvf ~/tarballs/astra-control-center-23.04.2-7.tar.gz
 ```
 
 The installation process will use the lab private registry for ACC's container images. Let's upload them (copy and paste the whole block):
@@ -35,7 +35,7 @@ podman login -u registryuser -p Netapp1! registry.demo.netapp.com
 
 export REGISTRY=registry.demo.netapp.com
 export PACKAGENAME=acc
-export PACKAGEVERSION=23.04.0-22
+export PACKAGEVERSION=23.04.2-7
 export DIRECTORYNAME=acc
 
 for astraImageFile in $(ls ${DIRECTORYNAME}/images/*.tar) ; do
@@ -101,8 +101,8 @@ Also, since the repository path changed, we also need to specify its new value i
 ```bash
 $ kubectl -n netapp-acc patch acc/astra --type=json -p='[ 
     {"op":"add", "path":"/spec/crds", "value":{"shouldUpgrade": true}},
-    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/23.04.0-22"},
-    {"op":"replace", "path":"/spec/astraVersion","value":"23.04.0-22"}
+    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/23.04.2-7"},
+    {"op":"replace", "path":"/spec/astraVersion","value":"23.04.2-7"}
 ]'
 astracontrolcenter.astra.netapp.io/astra patched
 ```
