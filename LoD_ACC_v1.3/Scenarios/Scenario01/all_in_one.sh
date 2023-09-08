@@ -114,7 +114,7 @@ echo "ADD NEW TRIDENT BACKENDS & SC ON RKE1"
 echo "#######################################################################################################"
 echo
 
-[ ! -f "/root/trident-installer/tridentctl" ] && cp /root/trident-installer/tridentctl /usr/bin
+[ -f "/root/trident-installer/tridentctl" ] && cp /root/trident-installer/tridentctl /usr/bin
 
 export KUBECONFIG=/root/kubeconfigs/rke1/kube_config_cluster.yml
 tridentctl -n trident create backend -f rke1_trident_svm1_san_backend.json
