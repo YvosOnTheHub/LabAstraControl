@@ -1,0 +1,13 @@
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-ontap-san
+  namespace: trident
+spec:
+  version: 1
+  backendName: svm1-san
+  storageDriverName: ontap-san
+  managementLIF: 192.168.0.133
+  storagePrefix: san_
+  credentials:
+    name: ontap-svm1-secret

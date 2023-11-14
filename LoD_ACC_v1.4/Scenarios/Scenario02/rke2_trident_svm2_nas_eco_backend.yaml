@@ -1,0 +1,15 @@
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-ontap-nas-eco
+  namespace: trident
+spec:
+  version: 1
+  backendName: svm2-nas-eco
+  storageDriverName: ontap-nas-economy
+  managementLIF: 192.168.0.153
+  storagePrefix: naseco_
+  defaults:
+    snapshotDir: 'true' 
+  credentials:
+    name: ontap-svm2-secret

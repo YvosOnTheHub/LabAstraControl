@@ -1,0 +1,14 @@
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-ontap-nas
+  namespace: trident
+spec:
+  version: 1
+  backendName: svm1-nas
+  storageDriverName: ontap-nas
+  managementLIF: 192.168.0.101
+  dataLIF: svm1.demo.netapp.com
+  svm: svm1
+  credentials:
+    name: ontap-cluster1-secret

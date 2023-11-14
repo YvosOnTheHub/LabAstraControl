@@ -1,0 +1,13 @@
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-ontap-san-eco
+  namespace: trident
+spec:
+  version: 1
+  backendName: svm2-san-eco
+  storageDriverName: ontap-san-economy
+  managementLIF: 192.168.0.153
+  storagePrefix: saneco_
+  credentials:
+    name: ontap-svm2-secret

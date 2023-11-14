@@ -14,11 +14,12 @@ This repo has been designed to go further with what is already available & also 
 Scenarios  
 ---------  
 [1.](LoD_ACC_v1.3/Scenarios/Scenario01) Configure the lab for iSCSI  
-[2.](LoD_ACC_v1.3/Scenarios/Scenario02) Astra Control and logging   
-[3.](LoD_ACC_v1.3/Scenarios/Scenario03) Pacman to the rescue !  
-[4.](LoD_ACC_v1.3/Scenarios/Scenario04) Protect you app with the Astra toolkit  
+[2.](LoD_ACC_v1.3/Scenarios/Scenario02) Complete the lab for NFS  
+[3.](LoD_ACC_v1.3/Scenarios/Scenario03) Astra Control and logging   
+[4.](LoD_ACC_v1.3/Scenarios/Scenario04) Pacman to the rescue !  
+[5.](LoD_ACC_v1.3/Scenarios/Scenario05) Protect you app with the Astra toolkit  
 <!--
-5. Jenkins (_still in brain cells, work in progress_)
+6. Jenkins (_still in brain cells, work in progress_)
 -->
 
 Addendum

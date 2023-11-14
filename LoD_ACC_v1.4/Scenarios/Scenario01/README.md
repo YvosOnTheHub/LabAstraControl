@@ -21,39 +21,34 @@ You need to edit the following files in order to follow Trident's best practices
 
 - _/etc/iscsi/iscsi.conf_ (Open-iSCSI configuration file)  
 Deactivate automatic session scans & set this to _manual_
-
 ```bash
 sed -i 's/^\(node.session.scan\).*/\1 = manual/' /etc/iscsi/iscsid.conf
 ```
 
 - _/etc/multipath.conf_ (Multipathing configuration file)  
 Enforce  the use of multipathing configuration
-
 ```bash
 sed -i '2 a \    find_multipaths no' /etc/multipath.conf
 ```
 
 - _/etc/iscsi/initiatorname.iscsi_ (Host IQN)  
 Change initiator name **on each node** to reflect uniqueness.  
-
 ```bash
 echo "InitiatorName=`/sbin/iscsi-iname`" > /etc/iscsi/initiatorname.iscsi
 ```
 
 - restart both services  
-
 ```bash
 systemctl restart iscsid
 systemctl restart multipathd
 ```
 
-- finally, restart the Trident DaemonSet in order for Trident to take into account the changes
-
+- finally, restart the Trident DaemonSet (on both clusters) in order for Trident to take into account the changes
 ```bash
 kubectl get -n trident po -l app=node.csi.trident.netapp.io -o name | xargs kubectl delete -n trident
 ```
 
-There you go, after having done that on all 10 nodes of this lab, you can move on to the next paragraph.  
+There you go, after having done that on all 6 nodes of this lab, you can move on to the next paragraph.  
   
 
 ## B. Configure both ONTAP SVM to allow iSCSI services
@@ -89,54 +84,40 @@ As there are 2 Rancher clusters, we will install 2 new backends per cluster. To 
 
 ```bash
 $ rke1
-$ tridentctl -n trident create backend -f rke1_trident_svm1_san_backend.json 
-+----------+----------------+--------------------------------------+--------+---------+
-| NAME     | STORAGE DRIVER |                 UUID                 | STATE  | VOLUMES |
-+----------+----------------+--------------------------------------+--------+---------+
-| svm1-san | ontap-san      | cdc59424-33cd-40af-9c9c-c42dc076f980 | online |       0 |
-+----------+----------------+--------------------------------------+--------+---------+
-
-$ tridentctl -n trident create backend -f rke1_trident_svm1_san_eco_backend.json 
-+--------------+-------------------+--------------------------------------+--------+---------+
-|   NAME       |  STORAGE DRIVER   |                 UUID                 | STATE  | VOLUMES |
-+--------------+-------------------+--------------------------------------+--------+---------+
-| svm1-san-eco | ontap-san-economy | d24a3b00-4d1f-4658-862c-c4eefec691af | online |       0 |
-+--------------+-------------------+--------------------------------------+--------+---------+
+$ kubectl create -f rke1_trident_svm1_secret.yaml
+secret/ontap-svm1-secret created
+$ kubectl create -f rke1_trident_svm1_san_backend.yaml
+tridentbackendconfig.trident.netapp.io/backend-ontap-san created
+$ kubectl create -f rke1_trident_svm1_san_eco_backend.yaml
+tridentbackendconfig.trident.netapp.io/backend-ontap-san-eco created
 
 $ tridentctl -n trident get backend
 +--------------+-------------------+--------------------------------------+--------+---------+
 |   NAME       |  STORAGE DRIVER   |                 UUID                 | STATE  | VOLUMES |
 +--------------+-------------------+--------------------------------------+--------+---------+
+| svm1-nas     | ontap-nas         | 9604cbd3-3dee-4cc7-aa02-9ddf07f008d8 | online |      16 |
 | svm1-san     | ontap-san         | cdc59424-33cd-40af-9c9c-c42dc076f980 | online |       0 |
 | svm1-san-eco | ontap-san-economy | d24a3b00-4d1f-4658-862c-c4eefec691af | online |       0 |
-| svm1-nas     | ontap-nas         | 9604cbd3-3dee-4cc7-aa02-9ddf07f008d8 | online |      16 |
 +--------------+-------------------+--------------------------------------+--------+---------+
 ```
 
 Let's do the same this for the cluster RKE2:
 ```bash
 $ rke2
-$ tridentctl -n trident create backend -f rke2_trident_svm2_san_backend.json 
-+----------+----------------+--------------------------------------+--------+---------+
-| NAME     | STORAGE DRIVER |                 UUID                 | STATE  | VOLUMES |
-+----------+----------------+--------------------------------------+--------+---------+
-| svm2-san | ontap-san      | cdc59424-33cd-40af-9c9c-c42dc076a123 | online |       0 |
-+----------+----------------+--------------------------------------+--------+---------+
-
-$ tridentctl -n trident create backend -f rke2_trident_svm2_san_eco_backend.json 
-+--------------+-------------------+--------------------------------------+--------+---------+
-|   NAME       |  STORAGE DRIVER   |                 UUID                 | STATE  | VOLUMES |
-+--------------+-------------------+--------------------------------------+--------+---------+
-| svm2-san-eco | ontap-san-economy | d24a3b00-4d1f-4658-862c-c4eefec6b456 | online |       0 |
-+--------------+-------------------+--------------------------------------+--------+---------+
+$ kubectl create -f rke2_trident_svm2_secret.yaml
+secret/ontap-svm2-secret created
+$ kubectl create -f rke2_trident_svm2_san_backend.yaml
+tridentbackendconfig.trident.netapp.io/backend-ontap-san created
+$ kubectl create -f rke2_trident_svm2_san_eco_backend.yaml
+tridentbackendconfig.trident.netapp.io/backend-ontap-san-eco created
 
 $ tridentctl -n trident get backend
 +--------------+-------------------+--------------------------------------+--------+---------+
 |   NAME       |  STORAGE DRIVER   |                 UUID                 | STATE  | VOLUMES |
 +--------------+-------------------+--------------------------------------+--------+---------+
+| svm2-nas     | ontap-nas         | 014ca078-eb62-48d2-8af6-00a34b828e13 | online |       0 |
 | svm2-san     | ontap-san         | cdc59424-33cd-40af-9c9c-c42dc076a123 | online |       0 |
 | svm2-san-eco | ontap-san-economy | d24a3b00-4d1f-4658-862c-c4eefec6b456 | online |       0 |
-| svm2-nas     | ontap-nas         | 014ca078-eb62-48d2-8af6-00a34b828e13 | online |       0 |
 +--------------+-------------------+--------------------------------------+--------+---------+
 ```
 

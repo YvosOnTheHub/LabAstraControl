@@ -1,0 +1,8 @@
+https://github.com/font/pacman
+
+git clone https://github.com/font/k8s-example-apps.git
+cd k8s-example-apps/pacman-nodejs-app
+
+podman build -t registry.demo.netapp.com/pacman-nodejs-app docker/
+podman login -u registryuser -p Netapp1! registry.demo.netapp.com
+podman push registry.demo.netapp.com/pacman-nodejs-app
