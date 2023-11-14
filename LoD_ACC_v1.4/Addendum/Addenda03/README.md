@@ -14,10 +14,10 @@ The Astra toolkit can be installed in various methods:
 
 The easiest way, in the Lab on Demand, is to run it with Docker, as you dont need to install the prerequisites.  
 The following command will download the image if not already present, start the container & log you directly in the _apps_ folder.  
-Note that the toolkit version compatible with ACC 22.11 is the number 2.5.1.  
+Note that the toolkit version compatible with ACC 23.07 is the number 2.6.9.  
 ```bash
-$ podman run -it docker.io/netapp/astra-toolkits:2.5.1 /bin/bash
-Trying to pull docker.io/netapp/astra-toolkits:2.5.1...
+$ podman run -it docker.io/netapp/astra-toolkits:2.6.8 /bin/bash
+Trying to pull docker.io/netapp/astra-toolkits:2.6.8...
 Getting image source signatures
 Copying blob 4d9fbb151d79 done  
 ...
@@ -27,7 +27,7 @@ Storing signatures
 root@2700bc21cbb3:/apps#
 ```
 
-If you have already upgraded this lab to ACC 23.04, I would recommend using the toolkit v2.6.4.  
+If you have already upgraded this lab to **ACC 23.10**, I would recommend using the toolkit **v2.6.9**.  
 
 We then need to create the toolkit configuration file, in order for it to communicate with Astra Control.  
 You first have to retrieve the ACC Account ID & Token, data that can be retrieved following the [Addenda01](../Addenda01/).  
@@ -51,13 +51,13 @@ The last line is just to clean up the config.yaml file and remove empty lines, c
 And that's it! We can now check that the toolkit is working properly:
 ```bash
 $ actoolkit list clusters
-+---------------+--------------------------------------+---------------+------------+----------------+----------------+------------------+
-| clusterName   | clusterID                            | clusterType   | location   | managedState   | tridentState   | tridentVersion   |
-+===============+======================================+===============+============+================+================+==================+
-| rke1          | 1ceedd15-f771-4f13-84ac-bf181148b202 | kubernetes    |            | managed        |                | 22.10.0          |
-+---------------+--------------------------------------+---------------+------------+----------------+----------------+------------------+
-| rke2          | 1a18ac44-0057-47e3-a2ee-09f3cd61ab05 | kubernetes    |            | managed        |                | 22.10.0          |
-+---------------+--------------------------------------+---------------+------------+----------------+----------------+------------------+
++---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
+| clusterName   | clusterID                            | clusterType   | location   | state   | managedState   | tridentStateAllowed   |
++===============+======================================+===============+============+=========+================+=======================+
+| rke1          | 601ff60e-1fcb-4f69-be89-2a2c4ca5a715 | rke           |            | running | managed        | unmanaged             |
++---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
+| rke2          | 4136e7b2-83ae-486a-932c-5258f11dea93 | kubernetes    |            | running | managed        | unmanaged             |
++---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
 ```
 
 Tadaaa !
