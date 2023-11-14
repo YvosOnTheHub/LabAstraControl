@@ -14,7 +14,7 @@ The Astra toolkit can be installed in various methods:
 
 The easiest way, in the Lab on Demand, is to run it with Docker, as you dont need to install the prerequisites.  
 The following command will download the image if not already present, start the container & log you directly in the _apps_ folder.  
-Note that the toolkit version compatible with ACC 23.07 is the number 2.6.9.  
+Note that the toolkit version compatible with ACC 23.07 is the number 2.6.8 (or 2.6.8-minimal).  
 ```bash
 $ podman run -it docker.io/netapp/astra-toolkits:2.6.8-minimal /bin/bash
 Trying to pull docker.io/netapp/astra-toolkits:2.6.8-minimal...
