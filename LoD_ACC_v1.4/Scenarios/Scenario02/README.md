@@ -4,12 +4,12 @@
 
 **GOAL:**  
 This lab is configured to provide persitent volumes based on NFS with the Trident ONTAP-NAS driver.  
-As ACC 23.10 supports protecting qtree bases environments (with the help of ACP), this chapter will guide you through the configuration of the Trident ONTAP-NAS-ECONOMY driver. (make sure you have gone the [lab upgrade](../../Addendum/Addenda02/) first).  
+As ACC 23.10 supports protecting qtree based environments (with the help of ACP), this chapter will guide you through the configuration of the Trident ONTAP-NAS-ECONOMY driver. (make sure you have gone the [lab upgrade](../../Addendum/Addenda02/) first).  
 
 The .snapshot directory must be accessible in order for Qtree backup to be functional.  
 This is achieved by setting the parameter _snapshortDir:true_ in the backend.  
 
-If you have already gone through the scenario2 which configures iSCSI backends, you don't need to recreate the secret.  
+If you have already gone through the scenario2 which configures iSCSI backends, you don't need to recreate the secret which we reuse here.  
 ```bash
 $ rke1
 $ kubectl create -f rke1_trident_svm1_secret.yaml
