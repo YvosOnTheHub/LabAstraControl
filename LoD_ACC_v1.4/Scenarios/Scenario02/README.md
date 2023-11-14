@@ -6,6 +6,8 @@
 This lab is configured to provide persitent volumes based on NFS with the Trident ONTAP-NAS driver.  
 As ACC 23.10 supports protecting qtree based environments (with the help of ACP), this chapter will guide you through the configuration of the Trident ONTAP-NAS-ECONOMY driver. (make sure you have gone the [lab upgrade](../../Addendum/Addenda02/) first).  
 
+Like in the previous scenario, this directory contains a _all_in_one.sh_ script to perform all these tasks.  
+
 The .snapshot directory must be accessible in order for Qtree backup to be functional.  
 This is achieved by setting the parameter _snapshortDir:true_ in the backend.  
 
