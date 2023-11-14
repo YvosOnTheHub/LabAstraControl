@@ -17,6 +17,13 @@ fi
 echo "##########################"
 echo "# Pre-work"
 echo "##########################"
+rm -f ~/tarballs/astra-control-center-*.tar.gz
+rm -f ~/tarballs/trident-installer-21*.tar.gz
+rm -f ~/tarballs/trident-installer-22*.tar.gz
+rm -rf ~/acc/images
+podman images | grep localhost | awk '{print $1":"$2}' | xargs podman image rm
+podman images | grep registry | awk '{print $1":"$2}' | xargs podman image rm
+podman images | grep docker | awk '{print $1":"$2}' | xargs podman image rm
 mv ~/acc ~/acc_23.04
 
 echo "##########################"

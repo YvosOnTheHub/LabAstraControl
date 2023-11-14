@@ -14,6 +14,17 @@ scp -p ~/Downloads/astra-control-center-23.10.0-68.tar.gz helper1:~/tarballs/
 You can now go through each step manually, or use the _all_in_one.sh_ script available on this github repository.  
 The script must run on the _helper1_ host.  
 
+If you have not gone through the [Trident upgrade](../1_Upgrade_Trident_23.07_to_23.10), you first need to free some space:
+```bash
+rm -f ~/tarballs/astra-control-center-*.tar.gz
+rm -f ~/tarballs/trident-installer-21*.tar.gz
+rm -f ~/tarballs/trident-installer-22*.tar.gz
+rm -rf ~/acc/images
+podman images | grep localhost | awk '{print $1":"$2}' | xargs podman image rm
+podman images | grep registry | awk '{print $1":"$2}' | xargs podman image rm
+podman images | grep docker | awk '{print $1":"$2}' | xargs podman image rm
+```
+
 Let' start by by unpacking the ACC package:
 ```bash
 cd
