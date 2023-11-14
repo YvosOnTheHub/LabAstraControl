@@ -8,7 +8,7 @@ The choice is not really about features, but rather more whether you want manage
 
 Also, Astra Control relies on Astra Trident for persistent volumes as well as CSI Snapshots.  
 
-The Lab on Demand currently has its third version of the Astra Control Center environment, available on https://labondemand.netapp.com/lab/sl10896.  
+The Lab on Demand currently has its fourth version of the Astra Control Center environment, available on https://labondemand.netapp.com/node/663.  
 This repo has been designed to go further with what is already available & also provide you with complete demo scenarios.  
 
 Scenarios  
