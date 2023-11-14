@@ -16,8 +16,8 @@ The easiest way, in the Lab on Demand, is to run it with Docker, as you dont nee
 The following command will download the image if not already present, start the container & log you directly in the _apps_ folder.  
 Note that the toolkit version compatible with ACC 23.07 is the number 2.6.9.  
 ```bash
-$ podman run -it docker.io/netapp/astra-toolkits:2.6.8 /bin/bash
-Trying to pull docker.io/netapp/astra-toolkits:2.6.8...
+$ podman run -it docker.io/netapp/astra-toolkits:2.6.8-minimal /bin/bash
+Trying to pull docker.io/netapp/astra-toolkits:2.6.8-minimal...
 Getting image source signatures
 Copying blob 4d9fbb151d79 done  
 ...
@@ -27,7 +27,7 @@ Storing signatures
 root@2700bc21cbb3:/apps#
 ```
 
-If you have already upgraded this lab to **ACC 23.10**, I would recommend using the toolkit **v2.6.9**.  
+If you have already upgraded this lab to **ACC 23.10**, I would recommend using the toolkit **v2.6.9** (or 2.6.9-minimal).  
 
 We then need to create the toolkit configuration file, in order for it to communicate with Astra Control.  
 You first have to retrieve the ACC Account ID & Token, data that can be retrieved following the [Addenda01](../Addenda01/).  
