@@ -13,17 +13,17 @@ This repo has been designed to go further with what is already available & also 
 
 Scenarios  
 ---------  
-[1.](LoD_ACC_v1.3/Scenarios/Scenario01) Configure the lab for iSCSI  
-[2.](LoD_ACC_v1.3/Scenarios/Scenario02) Complete the lab for NFS  
-[3.](LoD_ACC_v1.3/Scenarios/Scenario03) Astra Control and logging   
-[4.](LoD_ACC_v1.3/Scenarios/Scenario04) Pacman to the rescue !  
-[5.](LoD_ACC_v1.3/Scenarios/Scenario05) Protect you app with the Astra toolkit  
+[1.](LoD_ACC_v1.4/Scenarios/Scenario01) Configure the lab for iSCSI  
+[2.](LoD_ACC_v1.4/Scenarios/Scenario02) Complete the lab for NFS  
+[3.](LoD_ACC_v1.4/Scenarios/Scenario03) Astra Control and logging   
+[4.](LoD_ACC_v1.4/Scenarios/Scenario04) Pacman to the rescue !  
+[5.](LoD_ACC_v1.4/Scenarios/Scenario05) Protect you app with the Astra toolkit  
 <!--
 6. Jenkins (_still in brain cells, work in progress_)
 -->
 
 Addendum
 --------
-[1.](LoD_ACC_v1.3/Addendum/Addenda01) How to use Astra Control's REST API  
-[2.](LoD_ACC_v1.3/Addendum/Addenda02) Upgrade ACC  
-[3.](LoD_ACC_v1.3/Addendum/Addenda03) How to use the Astra Control Toolkit  
+[1.](LoD_ACC_v1.4/Addendum/Addenda01) How to use Astra Control's REST API  
+[2.](LoD_ACC_v1.4/Addendum/Addenda02) Upgrade ACC  
+[3.](LoD_ACC_v1.4/Addendum/Addenda03) How to use the Astra Control Toolkit  
