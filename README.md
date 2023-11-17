@@ -16,6 +16,7 @@ Scenarios for Astra Control Center
 [1.](LoD_ACC_v1.4/Scenarios-ACC/Scenario01) Astra Control and logging   
 [2.](LoD_ACC_v1.4/Scenarios-ACC/Scenario02) Pacman to the rescue !  
 [3.](LoD_ACC_v1.4/Scenarios-ACC/Scenario03) Protect you app with the Astra toolkit  
+[4.](LoD_ACC_v1.4/Scenarios-ACC/Scenario04) Switching storage class  
 
 Scenarios for Astra Control Provisioner
 ----------------------------------------  
@@ -24,7 +25,7 @@ Scenarios for Astra Control Provisioner
 Addendum
 --------
 [1.](LoD_ACC_v1.4/Addendum/Addenda01) How to use Astra Control's REST API  
-[2.](LoD_ACC_v1.4/Addendum/Addenda02) Upgrade ACC  
+[2.](LoD_ACC_v1.4/Addendum/Addenda02) Upgrade ACC from 23.07 to 23.10  
 [3.](LoD_ACC_v1.4/Addendum/Addenda03) Configure the lab for iSCSI  
 [4.](LoD_ACC_v1.4/Addendum/Addenda04) Complete the lab for NFS  
 [5.](LoD_ACC_v1.4/Addendum/Addenda05) How to use the Astra Control Toolkit  
