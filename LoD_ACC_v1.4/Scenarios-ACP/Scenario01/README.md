@@ -1,5 +1,5 @@
 #########################################################################################
-# SCENARIO 06: In-place snapshot restore
+# SCENARIO ACP 01: In-place snapshot restore
 #########################################################################################
 
 Astra Control Provisioner 23.10 introduced the possibility to perform an in-place CSI snapshot restore.  

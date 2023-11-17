@@ -1,63 +1,159 @@
 #########################################################################################
-# Addenda 3: How to use the Astra Control Toolkit
+# ADDENDA 3: Configure the lab for iSCSI  
 #########################################################################################
 
-Astra Control can be used via its GUI, its set of REST API or via SDK (ACToolkit).  
+**GOAL:**  
+This lab is configured to provide persitent volumes based on NFS (Trident ONTAP-NAS driver).  
+You may also want to take a look at iSCSI to host your data.  
+Astra Control Center supports **ONTAP-SAN** & **ONTAP-SAN-ECONOMY** Trident drivers, granted DR is not possible with the ECONOMY one.  
 
-This page will guide you through the installation & configuration of the ACTOOLKIT in the Lab on Demand.  
-You can read the documentation of this SDK on the following [link](https://github.com/NetApp/netapp-astra-toolkits).  
+The scenario will guide you through the following steps:
+- Configure & enable the iSCSI protocol on both Kubernetes nodes  
+- Configure iSCSI & create LIFs on both ONTAP clusters in the existing SVMs  
+- Create new Trident backends with ONTAP-SAN & ONTAP-SAN-ECONOMY
+- Create new storage classes
 
-The Astra toolkit can be installed in various methods:  
-- it can run in its own pre-configured container
-- it can be installed through the Python library
-- you can install it manually
+This folder also contains an **all_in_one.sh** script that can perform all these tasks for you (to run in the host _HELPER1_).  
 
-The easiest way, in the Lab on Demand, is to run it with Docker, as you dont need to install the prerequisites.  
-The following command will download the image if not already present, start the container & log you directly in the _apps_ folder.  
-Note that the toolkit version compatible with ACC 23.07 is the number 2.6.8 (or 2.6.8-minimal).  
+## A. Configure iSCSI on Kubernetes nodes  
+
+You need to edit the following files in order to follow Trident's best practices:  
+
+- _/etc/iscsi/iscsi.conf_ (Open-iSCSI configuration file)  
+Deactivate automatic session scans & set this to _manual_
 ```bash
-$ podman run -it docker.io/netapp/astra-toolkits:2.6.8-minimal /bin/bash
-Trying to pull docker.io/netapp/astra-toolkits:2.6.8-minimal...
-Getting image source signatures
-Copying blob 4d9fbb151d79 done  
-...
-Copying config 9f4f22957b done  
-Writing manifest to image destination
-Storing signatures
-root@2700bc21cbb3:/apps#
+sed -i 's/^\(node.session.scan\).*/\1 = manual/' /etc/iscsi/iscsid.conf
 ```
 
-If you have already upgraded this lab to **ACC 23.10**, I would recommend using the toolkit **v2.6.9** (or 2.6.9-minimal).  
-
-We then need to create the toolkit configuration file, in order for it to communicate with Astra Control.  
-You first have to retrieve the ACC Account ID & Token, data that can be retrieved following the [Addenda01](../Addenda01/).  
+- _/etc/multipath.conf_ (Multipathing configuration file)  
+Enforce  the use of multipathing configuration
 ```bash
-mkdir -p ~/.config/astra-toolkits/
-
-export ASTRA_ACCOUNTID=6912cacd-a03a-4f8f-85cb-713ef5253eff
-export ASTRA_APIKEY=2sgHm2eiBjn36RM_7pZD1Wiy6T9FV2V1SChmad80Qqo=
-
-cat <<EOT >> ~/.config/astra-toolkits/config.yaml
-headers:
-  Authorization: Bearer $ASTRA_APIKEY
-uid: $ASTRA_ACCOUNTID
-astra_project: astra.demo.netapp.com
-verifySSL: False
-EOT
-sed -i '/^$/d' ~/.config/astra-toolkits/config.yaml
-```
-The last line is just to clean up the config.yaml file and remove empty lines, created by the copy/paste process.  
-
-And that's it! We can now check that the toolkit is working properly:
-```bash
-$ actoolkit list clusters
-+---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
-| clusterName   | clusterID                            | clusterType   | location   | state   | managedState   | tridentStateAllowed   |
-+===============+======================================+===============+============+=========+================+=======================+
-| rke1          | 601ff60e-1fcb-4f69-be89-2a2c4ca5a715 | rke           |            | running | managed        | unmanaged             |
-+---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
-| rke2          | 4136e7b2-83ae-486a-932c-5258f11dea93 | kubernetes    |            | running | managed        | unmanaged             |
-+---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
+sed -i '2 a \    find_multipaths no' /etc/multipath.conf
 ```
 
-Tadaaa !
+- _/etc/iscsi/initiatorname.iscsi_ (Host IQN)  
+Change initiator name **on each node** to reflect uniqueness.  
+```bash
+echo "InitiatorName=`/sbin/iscsi-iname`" > /etc/iscsi/initiatorname.iscsi
+```
+
+- restart both services  
+```bash
+systemctl restart iscsid
+systemctl restart multipathd
+```
+
+- finally, restart the Trident DaemonSet (on both clusters) in order for Trident to take into account the changes
+```bash
+kubectl get -n trident po -l app=node.csi.trident.netapp.io -o name | xargs kubectl delete -n trident
+```
+
+There you go, after having done that on all 6 nodes of this lab, you can move on to the next paragraph.  
+  
+
+## B. Configure both ONTAP SVM to allow iSCSI services
+
+ONTAP an be configured in many ways. The all_in_one file uses REST API.  
+However, I will use CLI here to make it easier to read.  
+
+Configuring iSCSI in an existing SVM consists in creating one LIF per node & enabling the iSCSI service. Pretty straightforward...  
+Commands will run after connecting to the cluster via SSH (_ssh cluster1_ & _ssh cluster3_)
+
+- Let's create 2 iSCSI LIF on _SVM1_ hosted in _cluster1_ as well as enable the iSCSI service
+
+```bash
+network interface create -vserver svm1 -lif iSCSIlif1 -service-policy default-data-iscsi -address 192.168.0.245 -netmask 255.255.255.0 -home-node cluster1-01 -home-port e0d 
+network interface create -vserver svm1 -lif iSCSIlif2 -service-policy default-data-iscsi -address 192.168.0.246 -netmask 255.255.255.0 -home-node cluster1-02 -home-port e0d 
+iscsi create -target-alias svm1 -status-admin up -vserver svm1
+```
+
+- Now, let's care about _SVM2_ on _cluster3_
+
+```bash
+network interface create -vserver svm2 -lif iSCSIlif1 -service-policy default-data-iscsi -address 192.168.0.247 -netmask 255.255.255.0 -home-node cluster3-01 -home-port e0d 
+network interface create -vserver svm2 -lif iSCSIlif2 -service-policy default-data-iscsi -address 192.168.0.248 -netmask 255.255.255.0 -home-node cluster3-01 -home-port e0d 
+iscsi create -target-alias svm2 -status-admin up -vserver svm2
+```
+
+## C. Create new Trident backends with ONTAP-SAN & ONTAP-SAN-ECONOMY
+
+This paragraph must be run from the HERLPER1 host of the lab, as it contains the _tridentctl_ binary.  
+To simplify the following tests, make sure to copy this binary to the /usr/bin folder.  
+
+As there are 2 Rancher clusters, we will install 2 new backends per cluster. To switch between clusters (ie point to the right kubeconfig file), you can use the aliases _rke1_ and _rke2_. At any point in time, you can also verify which kubeconfig file you are defaulting to, by typing the alias _active_.  
+
+```bash
+$ rke1
+$ kubectl create -f rke1_trident_svm1_secret.yaml
+secret/ontap-svm1-secret created
+$ kubectl create -f rke1_trident_svm1_san_backend.yaml
+tridentbackendconfig.trident.netapp.io/backend-ontap-san created
+$ kubectl create -f rke1_trident_svm1_san_eco_backend.yaml
+tridentbackendconfig.trident.netapp.io/backend-ontap-san-eco created
+
+$ tridentctl -n trident get backend
++--------------+-------------------+--------------------------------------+--------+---------+
+|   NAME       |  STORAGE DRIVER   |                 UUID                 | STATE  | VOLUMES |
++--------------+-------------------+--------------------------------------+--------+---------+
+| svm1-nas     | ontap-nas         | 9604cbd3-3dee-4cc7-aa02-9ddf07f008d8 | online |      16 |
+| svm1-san     | ontap-san         | cdc59424-33cd-40af-9c9c-c42dc076f980 | online |       0 |
+| svm1-san-eco | ontap-san-economy | d24a3b00-4d1f-4658-862c-c4eefec691af | online |       0 |
++--------------+-------------------+--------------------------------------+--------+---------+
+```
+
+Let's do the same this for the cluster RKE2:
+```bash
+$ rke2
+$ kubectl create -f rke2_trident_svm2_secret.yaml
+secret/ontap-svm2-secret created
+$ kubectl create -f rke2_trident_svm2_san_backend.yaml
+tridentbackendconfig.trident.netapp.io/backend-ontap-san created
+$ kubectl create -f rke2_trident_svm2_san_eco_backend.yaml
+tridentbackendconfig.trident.netapp.io/backend-ontap-san-eco created
+
+$ tridentctl -n trident get backend
++--------------+-------------------+--------------------------------------+--------+---------+
+|   NAME       |  STORAGE DRIVER   |                 UUID                 | STATE  | VOLUMES |
++--------------+-------------------+--------------------------------------+--------+---------+
+| svm2-nas     | ontap-nas         | 014ca078-eb62-48d2-8af6-00a34b828e13 | online |       0 |
+| svm2-san     | ontap-san         | cdc59424-33cd-40af-9c9c-c42dc076a123 | online |       0 |
+| svm2-san-eco | ontap-san-economy | d24a3b00-4d1f-4658-862c-c4eefec6b456 | online |       0 |
++--------------+-------------------+--------------------------------------+--------+---------+
+```
+
+## D. Create new storage classes
+
+Finally, let's create some storage classes to use these new Trident Backends.  
+Just remember to launch the following commands against the correct Kubernete cluster.  
+
+```bash
+$ rke1
+$ kubectl create -f rke1_sc_san.yaml 
+storageclass.storage.k8s.io/sc-san-svm1 created
+$ kubectl create -f rke1_sc_saneco.yaml 
+storageclass.storage.k8s.io/sc-san-eco-svm1 created
+
+$ kubectl get sc
+NAME                    PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+sc-san-svm1             csi.trident.netapp.io   Delete          Immediate           true                   2m29s
+sc-nas-svm1 (default)   csi.trident.netapp.io   Delete          Immediate           true                   289d
+sc-san-eco-svm1         csi.trident.netapp.io   Delete          Immediate           true                   3s
+```
+
+And again, let's create the storage classes for RKE2:
+
+```bash
+$ rke2
+$ kubectl create -f rke2_sc_san.yaml 
+storageclass.storage.k8s.io/sc-san-svm2 created
+$ kubectl create -f rke2_sc_saneco.yaml 
+storageclass.storage.k8s.io/sc-san-eco-svm2 created
+
+$ kubectl get sc
+NAME                    PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+sc-san-svm2             csi.trident.netapp.io   Delete          Immediate           true                   2m29s
+sc-nas-svm2 (default)   csi.trident.netapp.io   Delete          Immediate           true                   289d
+sc-san-eco-svm2         csi.trident.netapp.io   Delete          Immediate           true                   3s
+```
+
+There you go! You are all set !

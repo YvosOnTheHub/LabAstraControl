@@ -1,5 +1,5 @@
 #########################################################################################
-# SCENARIO 3.3: Seek & Destroy ! (and restore)
+# SCENARIO 2.3: Seek & Destroy ! (and restore)
 #########################################################################################
 
 We currently are in a safe zone. Pacman is running. Snapshots & backups are planned, as well as mirroring.  

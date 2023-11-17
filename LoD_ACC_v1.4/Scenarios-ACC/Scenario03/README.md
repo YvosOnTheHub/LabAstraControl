@@ -1,5 +1,5 @@
 #########################################################################################
-# SCENARIO 4: Protect you app with the Astra toolkit
+# SCENARIO 3: Protect you app with the Astra toolkit
 #########################################################################################
 
 In this chapter, we will see how to manage and protect an application (wordpress) with the Astra toolkit.  

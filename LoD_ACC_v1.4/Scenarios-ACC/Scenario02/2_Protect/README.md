@@ -1,5 +1,5 @@
 #########################################################################################
-# SCENARIO 3.2: Let's enable Pacman's protection 
+# SCENARIO 2.2: Let's enable Pacman's protection 
 #########################################################################################
 
 We will use Astra Control Center to create :

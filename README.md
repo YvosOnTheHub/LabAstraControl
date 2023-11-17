@@ -6,24 +6,25 @@ It is currently available in 2 fashions:
 - _Astra Control Service_: fully managed service, provided & maintained by NetApp  
 The choice is not really about features, but rather more whether you want manage the solution yourself.  
 
-Also, Astra Control relies on Astra Trident for persistent volumes as well as CSI Snapshots.  
+Also, Astra Control relies on Astra Trident & Astra Control Provisioner for persistent volumes as well as CSI Snapshots.  
 
 The Lab on Demand currently has its fourth version of the Astra Control Center environment, available on https://labondemand.netapp.com/node/663.  
-This repo has been designed to go further with what is already available & also provide you with complete demo scenarios.  
+This repo has been designed to go further with what is already available & also provide you with complete demo scenarios for both ACC & ACP.    
 
-Scenarios  
----------  
-[1.](LoD_ACC_v1.4/Scenarios/Scenario01) Configure the lab for iSCSI  
-[2.](LoD_ACC_v1.4/Scenarios/Scenario02) Complete the lab for NFS  
-[3.](LoD_ACC_v1.4/Scenarios/Scenario03) Astra Control and logging   
-[4.](LoD_ACC_v1.4/Scenarios/Scenario04) Pacman to the rescue !  
-[5.](LoD_ACC_v1.4/Scenarios/Scenario05) Protect you app with the Astra toolkit  
-<!--
-6. Jenkins (_still in brain cells, work in progress_)
--->
+Scenarios for Astra Control Center
+----------------------------------  
+[1.](LoD_ACC_v1.4/Scenarios-ACC/Scenario01) Astra Control and logging   
+[2.](LoD_ACC_v1.4/Scenarios-ACC/Scenario02) Pacman to the rescue !  
+[3.](LoD_ACC_v1.4/Scenarios-ACC/Scenario03) Protect you app with the Astra toolkit  
+
+Scenarios for Astra Control Proviosioner
+----------------------------------------  
+[1.](LoD_ACC_v1.4/Scenarios-ACP/Scenario01) In-Place Snapshot Restore
 
 Addendum
 --------
 [1.](LoD_ACC_v1.4/Addendum/Addenda01) How to use Astra Control's REST API  
 [2.](LoD_ACC_v1.4/Addendum/Addenda02) Upgrade ACC  
-[3.](LoD_ACC_v1.4/Addendum/Addenda03) How to use the Astra Control Toolkit  
+[3.](LoD_ACC_v1.4/Addendum/Addenda03) Configure the lab for iSCSI  
+[4.](LoD_ACC_v1.4/Addendum/Addenda04) Complete the lab for NFS  
+[5.](LoD_ACC_v1.4/Addendum/Addenda05) How to use the Astra Control Toolkit  

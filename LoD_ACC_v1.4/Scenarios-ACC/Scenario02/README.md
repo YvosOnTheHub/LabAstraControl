@@ -1,5 +1,5 @@
 #########################################################################################
-# SCENARIO 3: Pacman to the rescue !
+# SCENARIO 2: Pacman to the rescue !
 #########################################################################################
 
 Playing a game which keeps high scores can quickly transform the experience into a full steam competition !  
