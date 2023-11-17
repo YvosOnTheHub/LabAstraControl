@@ -17,7 +17,7 @@ Scenarios for Astra Control Center
 [2.](LoD_ACC_v1.4/Scenarios-ACC/Scenario02) Pacman to the rescue !  
 [3.](LoD_ACC_v1.4/Scenarios-ACC/Scenario03) Protect you app with the Astra toolkit  
 
-Scenarios for Astra Control Proviosioner
+Scenarios for Astra Control Provisioner
 ----------------------------------------  
 [1.](LoD_ACC_v1.4/Scenarios-ACP/Scenario01) In-Place Snapshot Restore
 

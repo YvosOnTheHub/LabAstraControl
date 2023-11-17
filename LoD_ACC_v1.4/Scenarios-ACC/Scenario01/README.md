@@ -1,5 +1,5 @@
 #########################################################################################
-# SCENARIO 2: Install & configure a logging stack (EFK) 
+# SCENARIO 1: Install & configure a logging stack (EFK) 
 #########################################################################################
 
 Astra Control gives you the possibility to create a connection with a log analysis software.  
