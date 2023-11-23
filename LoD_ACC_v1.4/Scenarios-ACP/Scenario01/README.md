@@ -6,6 +6,10 @@ Astra Control Provisioner 23.10 introduced the possibility to perform an in-plac
 
 This chapter will lead you in the management of snapshots with a simple lightweight container BusyBox.
 
+**In-place snapshot restore can only be achieved by following these requirements**:
+- the PVC must be disconnected to its POD for the restore to succeed  
+- only the newest CSI Snapshot can be restored
+
 You can find a shell script in this directory _scenario06_busybox_pull_images.sh_ to pull images utilized in this scenario if needed. It uses 2 **optional** parameters, your Docker Hub login & password:
 
 ```bash
@@ -108,6 +112,61 @@ $ kubectl exec -n sc06busybox $(kubectl get pod -n sc06busybox -o name) -- more 
 Check out Astra Control Provisioner!
 ```
 Tadaaa, you have restored the whole snapshot in one shot!  
+
+## D. Error use cases: multiple CSI Snapshots
+
+Let's take the same application, but with several CSI Snapshots:
+```bash
+$ kubectl get -n sc06busybox vs
+NAME               READYTOUSE   SOURCEPVC   SOURCESNAPSHOTCONTENT   RESTORESIZE   SNAPSHOTCLASS   SNAPSHOTCONTENT                                    CREATIONTIME   AGE
+mydata-snapshot1   true         mydata                              268Ki         csi-snapclass   snapcontent-c369f8a8-d837-4d06-90f4-0d1eb4d3b8a0   19h            19h
+mydata-snapshot2   true         mydata                              492Ki         csi-snapclass   snapcontent-1c22ba03-7f32-4ae2-8771-5e5ccb7d28c1   19h            19h
+mydata-snapshot3   true         mydata                              708Ki         csi-snapclass   snapcontent-12938d6d-faea-4495-804d-aaa96c38977b   19h            19h
+```
+
+_mydata-snapshot3_ being the newest one, what happens if you try to restore the second one.  
+It will fail with an explicit message in the logs or in the description of the TASR object:  
+```bash
+$ kubectl create -f snapshot-restore.yaml
+tridentactionsnapshotrestore.trident.netapp.io/mydatarestore created
+
+$ kubectl get -n sc06busybox tasr -o=jsonpath='{.items[0].status}' | jq
+{
+  "completionTime": "2023-11-23T10:00:37Z",
+  "message": "volume snapshot mydata-snapshot2 is not the newest snapshot of PVC sc06busybox/mydata",
+  "state": "Failed"
+}
+
+$ kubectl delete -f snapshot-restore.yaml 
+tridentactionsnapshotrestore.trident.netapp.io "mydatarestore" deleted
+```
+
+## E. Error use cases: PVC attached to a POD
+
+If you try to restore a CSI snapshot that is attached to a POD, it will also fail with an explicit message in the logs.  
+You first need to scale down the POD that attaches the PVC for the restore operation to succeed:  
+```bash
+$ kubect get -n sc06busybox pod,pvc
+NAME                           READY   STATUS    RESTARTS   AGE
+pod/busybox-77797b84d8-hlkhx   1/1     Running   0          15s
+
+NAME                           STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistentvolumeclaim/mydata   Bound    pvc-d6e03d66-759f-4c0e-a5e6-637bce4c9d55   1Gi        RWX            sc-nas-svm2    19h
+
+$ kubectl create -f snapshot-restore.yaml
+tridentactionsnapshotrestore.trident.netapp.io/mydatarestore created
+
+$ kubectl get -n sc06busybox tasr -o=jsonpath='{.items[0].status}' | jq
+{
+  "completionTime": "2023-11-23T10:16:14Z",
+  "message": "cannot restore attached volume to snapshot",
+  "startTime": "2023-11-23T10:16:14Z",
+  "state": "Failed"
+}
+
+$ kubectl delete -f snapshot-restore.yaml 
+tridentactionsnapshotrestore.trident.netapp.io "mydatarestore" deleted
+```
 
 ## Optional Cleanup
 
