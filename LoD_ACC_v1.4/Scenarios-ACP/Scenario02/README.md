@@ -11,7 +11,7 @@ We will see in this scenario what you can or cannot do with such snapshot.
 Also, in order for this lab to succeed, you must have first created the ONTAP-NAS-ECONOMY Trident backend & storage class on RKE2.  
 The steps to do so are described in the [Addendum04](../../Addendum/Addenda04/) chapter.  
 
-You can find a shell script in this directory _scenario01_busybox_pull_images.sh_ to pull images utilized in this scenario if needed. It uses 2 **optional** parameters, your Docker Hub login & password:
+You can find a shell script in this directory _scenario02_busybox_pull_images.sh_ to pull images utilized in this scenario if needed. It uses 2 **optional** parameters, your Docker Hub login & password:
 
 ```bash
 sh scenario02_busybox_pull_images.sh my_login my_password
@@ -59,7 +59,7 @@ $ tridentctl -n trident get snapshot
 | snapshot-4faaecba-4403-4429-802c-28cb0b78fe02 | pvc-34c42cd5-5d24-48ca-a781-64131018a758 | true    |
 +-----------------------------------------------+------------------------------------------+---------+
 ```
-
+The snapshot creation succeeded & it is _READYTOUSE_.  
 Now, let's find out the name of the ONTAP FlexVol that contains our qtree (ie PVC):
 ```bash
 $ kubectl get -n trident tvol $(kubectl get -n sc02busybox pvc mydata -o=jsonpath='{.spec.volumeName}') -o=jsonpath='{.config.internalID}' | awk -F '/' '{print $5}'
@@ -86,7 +86,7 @@ As expected, we just validated that the snapshot sits at the FlexVol level.
 
 **Answer: no.**  
 
-Let's validate that:
+Let's validate that. You will see that PVC will remain in a _Pending_ state:  
 ```bash
 $ kubectl get -f pvcfromsnap.yaml 
 persistentvolumeclaim/mydata-from-snap created
@@ -115,7 +115,8 @@ persistentvolumeclaim "mydata-from-snap" deleted
 Astra Control Center and Astra Control Service will leverage that feature to create consistent backup for applications that run on top of qtrees.  
 This is really a clear differentiator on the market...
 
-More details about this : https://docs.netapp.com/us-en/astra-control-center/use/protect-apps.html#enable-backup-and-restore-for-ontap-nas-economy-operations
+More details about this:  
+https://docs.netapp.com/us-en/astra-control-center/use/protect-apps.html#enable-backup-and-restore-for-ontap-nas-economy-operations
 
 ## E. What about Astra Trident ? 
 
