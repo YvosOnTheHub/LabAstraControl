@@ -2,7 +2,7 @@ apiVersion: trident.netapp.io/v1
 kind: TridentActionSnapshotRestore
 metadata:
   name: mydatarestore
-  namespace: sc06busybox
+  namespace: sc01busybox
 spec:
   pvcName: mydata
   volumeSnapshotName: mydata-snapshot

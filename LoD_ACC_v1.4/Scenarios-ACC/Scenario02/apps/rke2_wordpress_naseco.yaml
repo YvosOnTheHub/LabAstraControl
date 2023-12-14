@@ -1,0 +1,15 @@
+global: 
+  storageClass: sc-nas-eco-svm2
+    
+wordpressUsername: admin
+wordpressPassword: Netapp1!
+
+persistence:
+  accessModes:
+    - ReadWriteMany
+    
+mariadb:
+  primary:
+    persistence:
+      accessModes:
+        - ReadWriteMany

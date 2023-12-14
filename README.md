@@ -13,14 +13,16 @@ This repo has been designed to go further with what is already available & also 
 
 Scenarios for Astra Control Center
 ----------------------------------  
-[1.](LoD_ACC_v1.4/Scenarios-ACC/Scenario01) Astra Control and logging   
-[2.](LoD_ACC_v1.4/Scenarios-ACC/Scenario02) Pacman to the rescue !  
-[3.](LoD_ACC_v1.4/Scenarios-ACC/Scenario03) Protect you app with the Astra toolkit  
-[4.](LoD_ACC_v1.4/Scenarios-ACC/Scenario04) Switching storage class  
+[1.](LoD_ACC_v1.4/Scenarios-ACC/Scenario01) Astra Control and logging  
+[2.](LoD_ACC_v1.4/Scenarios-ACC/Scenario02) Deploying more wordpress apps to test all possible storage classes  
+[3.](LoD_ACC_v1.4/Scenarios-ACC/Scenario03) Pacman to the rescue !  
+[4.](LoD_ACC_v1.4/Scenarios-ACC/Scenario04) Protect you app with the Astra toolkit  
+<!--[5.](LoD_ACC_v1.4/Scenarios-ACC/Scenario05) Switching storage class  -->
 
 Scenarios for Astra Control Provisioner
 ----------------------------------------  
 [1.](LoD_ACC_v1.4/Scenarios-ACP/Scenario01) In-Place Snapshot Restore
+[2.](LoD_ACC_v1.4/Scenarios-ACP/Scenario02) Snapshots & ONTAP-NAS-ECONOMY  
 
 Addendum
 --------
