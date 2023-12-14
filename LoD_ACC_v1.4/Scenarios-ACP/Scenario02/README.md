@@ -48,7 +48,7 @@ Let's create a snapshot & see the result on the storage backend:
 $ kubectl create -f pvc-snapshot.yaml
 volumesnapshot.snapshot.storage.k8s.io/mydata-snapshot created
 
-$ kubectl get -n sc06busybox vs
+$ kubectl get -n sc02busybox vs
 NAME              READYTOUSE   SOURCEPVC   SOURCESNAPSHOTCONTENT   RESTORESIZE   SNAPSHOTCLASS   SNAPSHOTCONTENT                                    CREATIONTIME   AGE
 mydata-snapshot   true         mydata                              1Gi           csi-snapclass   snapcontent-4faaecba-4403-4429-802c-28cb0b78fe02   99m            100m
 
@@ -62,7 +62,7 @@ $ tridentctl -n trident get snapshot
 
 Now, let's find out the name of the ONTAP FlexVol that contains our qtree (ie PVC):
 ```bash
-$ kubectl get -n trident tvol $(kubectl get -n sc06busybox pvc mydata -o=jsonpath='{.spec.volumeName}') -o=jsonpath='{.config.internalID}' | awk -F '/' '{print $5}'
+$ kubectl get -n trident tvol $(kubectl get -n sc02busybox pvc mydata -o=jsonpath='{.spec.volumeName}') -o=jsonpath='{.config.internalID}' | awk -F '/' '{print $5}'
 trident_qtree_pool_naseco_FISZHHICJE
 ```
 Finally, let's validate through ONTAP API that our snapshot is indeed at the FlexVol level:
@@ -91,18 +91,18 @@ Let's validate that:
 $ kubectl get -f pvcfromsnap.yaml 
 persistentvolumeclaim/mydata-from-snap created
 
-$ kubectl get -n sc06busybox pvc
+$ kubectl get -n sc02busybox pvc
 NAME               STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
 mydata             Bound     pvc-34c42cd5-5d24-48ca-a781-64131018a758   1Gi        RWX            sc-nas-eco-svm2   18m
 mydata-from-snap   Pending                                                                        sc-nas-eco-svm2   15s
 
-$ kubectl describe -n sc06busybox pvc mydata-from-snap
+$ kubectl describe -n sc02busybox pvc mydata-from-snap
 ...
 Events:
   Type     Reason                Age               From                                                                                           Message
   ----     ------                ----              ----                                                                                           -------
   Normal   ExternalProvisioning  5s (x7 over 88s)  persistentvolume-controller                                                                    waiting for a volume to be created, either by external provisioner "csi.trident.netapp.io" or manually created by system administrator
-  Normal   Provisioning          4s (x5 over 88s)  csi.trident.netapp.io_trident-controller-c97f4bc6f-ltvtw_3fcc6015-3406-43a7-a849-03fe50223963  External provisioner is provisioning volume for claim "sc06busybox/mydata-from-snap"
+  Normal   Provisioning          4s (x5 over 88s)  csi.trident.netapp.io_trident-controller-c97f4bc6f-ltvtw_3fcc6015-3406-43a7-a849-03fe50223963  External provisioner is provisioning volume for claim "sc02busybox/mydata-from-snap"
   Normal   ProvisioningFailed    4s (x5 over 88s)  csi.trident.netapp.io                                                                          failed to create cloned volume pvc-fa88b07f-33ea-4637-848d-cf95e0573b4c on backend svm2-nas-eco: cloning is not supported by backend type ontap-nas-economy
   Warning  ProvisioningFailed    4s (x5 over 88s)  csi.trident.netapp.io_trident-controller-c97f4bc6f-ltvtw_3fcc6015-3406-43a7-a849-03fe50223963  failed to provision volume with StorageClass "sc-nas-eco-svm2": rpc error: code = Unknown desc = failed to create cloned volume pvc-fa88b07f-33ea-4637-848d-cf95e0573b4c on backend svm2-nas-eco: cloning is not supported by backend type ontap-nas-economy
 

@@ -21,7 +21,7 @@ Scenarios for Astra Control Center
 
 Scenarios for Astra Control Provisioner
 ----------------------------------------  
-[1.](LoD_ACC_v1.4/Scenarios-ACP/Scenario01) In-Place Snapshot Restore
+[1.](LoD_ACC_v1.4/Scenarios-ACP/Scenario01) In-Place Snapshot Restore  
 [2.](LoD_ACC_v1.4/Scenarios-ACP/Scenario02) Snapshots & ONTAP-NAS-ECONOMY  
 
 Addendum
