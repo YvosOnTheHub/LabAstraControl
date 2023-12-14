@@ -17,7 +17,8 @@ Scenarios for Astra Control Center
 [2.](LoD_ACC_v1.4/Scenarios-ACC/Scenario02) Deploying more wordpress apps to test all possible storage classes  
 [3.](LoD_ACC_v1.4/Scenarios-ACC/Scenario03) Pacman to the rescue !  
 [4.](LoD_ACC_v1.4/Scenarios-ACC/Scenario04) Protect you app with the Astra toolkit  
-<!--[5.](LoD_ACC_v1.4/Scenarios-ACC/Scenario05) Switching storage class  -->
+<!--[5.](LoD_ACC_v1.4/Scenarios-ACC/Scenario05) Customize your DR automatically   -->
+<!--[6.](LoD_ACC_v1.4/Scenarios-ACC/Scenario06) Switching storage class  -->
 
 Scenarios for Astra Control Provisioner
 ----------------------------------------  
