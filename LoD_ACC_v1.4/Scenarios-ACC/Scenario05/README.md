@@ -21,5 +21,5 @@ Astra Control Center supports the following types of execution hooks, based on w
 - Post-restore
 - Post-failover
 
-This scenario can be used to see how those hooks work & the result you can expect:
+This scenario can be used to see how those hooks work & the result you can expect:  
 [1.](1-Post-Restore) Post Restore

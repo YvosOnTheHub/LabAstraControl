@@ -14,7 +14,7 @@ That is when this post-restore hook can help you, in order to automatically appl
 As this lab comes with one image repository, in order to test the first hook easily, let's imagine an app (_wordpress_) that uses images with different tags (_site1_ & _site2_) depending on the site where it runs.  
 Also, this app runs on site1 with _2 replicas_, but should run with only _1 replica_ on site2. Changing the number of replicas will be done by a second hook.   
 
-Let's first push both images to the local repository after retrieving it from a public repo:
+Let's first push both images to the local repository (with 2 different tags) after retrieving it from a public repo:
 ```bash
 podman pull docker.io/bitnami/wordpress:6.4.2-debian-11-r6
 podman pull docker.io/bitnami/mariadb:11.2.2-debian-11-r0
@@ -38,6 +38,7 @@ sh _scenario05-wordpress-images.sh my_login my_password
 
 Now let's create the wordpress instance on the first site (ie on cluster _RKE1_):
 ```bash
+rke1
 helm install wphook bitnami/wordpress --namespace wphook --create-namespace -f helm-wordpress-values.yaml
 ```
 
@@ -73,9 +74,10 @@ This can also be achieved through the GUI, or using the script in this folder wh
 Once this is done, this is what you can expect to see in the GUI:
 <p align="center"><img src="../Images/SC05-1-hooks-list.png"></p>
 
-Let's try to restore this application on the same cluster in a new namespace _wphookrestore_.  
+Let's try to restore this application on the second cluster (rke2) in a new namespace _wphookrestore_.  
 This can be achieved via the GUI, or using the script in the folder ((**WORK IN PROGRESS**)).  
 ```bash
+$ rke2
 $ kubectl get -n wphookrestore all,pvc
 NAME                                         READY   STATUS    RESTARTS      AGE
 pod/astra-hook-deployment-7b6cb87cff-wqn76   1/1     Running   0             43m
@@ -113,9 +115,10 @@ $ kubectl get pods -n wphookrestore -l app.kubernetes.io/instance=wphook -o=json
 wphook-mariadb-0:	registry.demo.netapp.com/bitnami/mariadb:site2
 wphook-wordpress-5f486bf79d-xxrhd:	registry.demo.netapp.com/bitnami/wordpress:site2
 ```
-As expected, we are now using a image different from the source application, this time tagged with "site2".
+As expected, we are now using a image different from the source application, this time tagged with **site2**.
 
-Both _restore_ hooks also write logs in a file located in the alpine pod folder /var/log/:
+Both _restore_ hooks also write logs in a file located in the alpine pod folder /var/log/.  
+This can be useful to debug or follow up all the tasks performed during the restore proces.  
 ```bash
 $ kubectl exec -n wphook2 $(kubectl get pod -n wphook2 -l app.kubernetes.io/name=scenario05 -o name) -- more /var/log/acc-logs-hooks.log
 Wed Dec 20 13:48:43 UTC 2023: ========= HOOK REPLICAS SCALE START ===========
