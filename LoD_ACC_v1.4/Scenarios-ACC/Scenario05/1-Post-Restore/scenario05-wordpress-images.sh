@@ -4,11 +4,6 @@
 # PARAMETER1: Docker hub login
 # PARAMETER2: Docker hub password
 
-if [[  $(docker images | grep registry | grep busybox | grep 35 | wc -l) -ne 0 ]]; then
-    echo "BUSYBOX image already present. Nothing to do"
-    exit 0
-fi
-
 if [[ $(yum info jq -y 2> /dev/null | grep Repo | awk '{ print $3 }') != "installed" ]]; then
     echo "#######################################################################################################"
     echo "Install JQ"
@@ -34,12 +29,24 @@ else
   fi
 fi
 
-echo "##############################################"
-echo "# PULL/PUSH BUSYBOX IMAGE"
-echo "##############################################"
 podman login -u registryuser -p Netapp1! registry.demo.netapp.com
-podman pull busybox:1.35.0
-podman tag busybox:1.35.0 registry.demo.netapp.com/busybox:site1
-podman push registry.demo.netapp.com/busybox:site1
-podman tag busybox:1.35.0 registry.demo.netapp.com/busybox:site2
-podman push registry.demo.netapp.com/busybox:site2
+
+echo
+echo "##############################################"
+echo "# PULL/PUSH WORDPRESS IMAGE"
+echo "##############################################"
+podman pull docker.io/bitnami/wordpress:5.9.3-debian-11-r5
+podman tag docker.io/bitnami/wordpress:5.9.3-debian-11-r5 registry.demo.netapp.com/bitnami/wordpress:site1
+podman push registry.demo.netapp.com/bitnami/wordpress:site1
+podman tag docker.io/bitnami/wordpress:5.9.3-debian-11-r5 registry.demo.netapp.com/bitnami/wordpress:site2
+podman push registry.demo.netapp.com/bitnami/wordpress:site2
+
+echo
+echo "##############################################"
+echo "# PULL/PUSH MARIADB IMAGE"
+echo "##############################################"
+podman pull docker.io/bitnami/mariadb:10.5.15-debian-10-r62
+podman tag docker.io/bitnami/mariadb:10.5.15-debian-10-r62 registry.demo.netapp.com/bitnami/mariadb:site1
+podman push registry.demo.netapp.com/bitnami/mariadb:site1
+podman tag docker.io/bitnami/mariadb:10.5.15-debian-10-r62 registry.demo.netapp.com/bitnami/mariadb:site2
+podman push registry.demo.netapp.com/bitnami/mariadb:site2

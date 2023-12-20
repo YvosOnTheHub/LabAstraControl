@@ -37,7 +37,7 @@ fi
 echo "##############################################"
 echo "# PULL/PUSH BUSYBOX IMAGE"
 echo "##############################################"  
-podman login -u registryuser -p Netapp1! registry.demo.netapp.com
 podman pull busybox:1.35.0
+podman login -u registryuser -p Netapp1! registry.demo.netapp.com
 podman tag busybox:1.35.0 registry.demo.netapp.com/busybox:1.35.0
 podman push registry.demo.netapp.com/busybox:1.35.0

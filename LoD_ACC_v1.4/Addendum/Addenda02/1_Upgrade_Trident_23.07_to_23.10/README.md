@@ -88,4 +88,4 @@ Notice that there is a new container in the controller pod! This is the ACP imag
 
 The _all_in_one_trident_acp.sh_ script can be used to perform all these tasks.  
 
-You can now proceed with the [ACC upgrade to 23.10](../2_Upgrade_23.07_to_23.10).
+You can now proceed with the [ACC upgrade to 23.10](../2_Upgrade_ACC_23.07_to_23.10).
