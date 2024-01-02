@@ -1,5 +1,5 @@
 global: 
-  storageClass: sc-nas-svm2
+  storageClass: sc-nas-svm1
   
 replicaCount: 2
 
