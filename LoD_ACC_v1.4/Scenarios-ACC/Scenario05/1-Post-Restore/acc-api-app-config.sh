@@ -17,20 +17,21 @@ fi
 ACCOUNTID=$1
 APITOKEN=$2
 
-mkdir tmpscript
-cd tmpscript
+DIR="tmpscript"
+[ -d "$DIR" ] && rm -rf $DIR
+mkdir $DIR && cd $DIR
 
 echo
 echo "############################################"
 echo "# ENABLE HOOKS IF NEEDED"
 echo "############################################"
 
-SETTINGS=$(curl -k -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/core/v1/settings" -H "Authorization: Bearer $APITOKEN")
+SETTINGS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/core/v1/settings" -H "Authorization: Bearer $APITOKEN")
 HOOKFEATURE=$(echo $SETTINGS | jq -r '.items[] | select(.name == "astra.account.executionHooks.enabled")')
 HOOKFEATURESTATUS=$(echo $HOOKFEATURE | jq -r .currentConfig.isEnabled)
 HOOKFEATUREID=$(echo $HOOKFEATURE | jq -r .id)
 
-if [ $HOOKFEATURESTATUS eq 'false' ]; then
+if [ $HOOKFEATURESTATUS -eq 'false' ]; then
   cat > CURL-ACC-Hook-Enable.json << EOF
 {
   "desiredConfig": {"isEnabled": "true"},
@@ -39,7 +40,7 @@ if [ $HOOKFEATURESTATUS eq 'false' ]; then
 }
 EOF
 
-  curl -k -X PUT "https://astra.demo.netapp.com/accounts/$ACCOUNTID/core/v1/settings/$HOOKFEATUREID" \
+  curl -k -s -X PUT "https://astra.demo.netapp.com/accounts/$ACCOUNTID/core/v1/settings/$HOOKFEATUREID" \
   -H 'accept: application/astra-setting+json' -H 'Content-Type: application/astra-setting+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-Hook-Enable.json
@@ -95,11 +96,14 @@ HOOKLIST=$(curl -s -k -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/
 ISMARIADB=$(echo $HOOKLIST | jq -r '.items[] | select(.name | contains("maria"))')
 
 if [ -z "$ISMARIADB" ]; then
-    echo
-    echo "############################################"
-    echo "# CLONE VERDA REPO"
-    echo "############################################"
-    git clone https://github.com/NetApp/Verda.git ~/Verda
+    DIR="/root/Verda"
+    if [ ! -d "$DIR" ]; then
+      echo
+      echo "############################################"
+      echo "# CLONE VERDA REPO"
+      echo "############################################"
+      git clone https://github.com/NetApp/Verda.git ~/Verda
+    fi
 
     echo
     echo "############################################"
@@ -119,7 +123,7 @@ cat > CURL-ACC-Hook-MARIADB.json << EOF
 }
 EOF
 
-    curl -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/core/v1/hookSources" \
+    curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/core/v1/hookSources" \
         -H 'accept: application/astra-hookSource+json' -H 'Content-Type: application/astra-hookSource+json' \
         -H "Authorization: Bearer $APITOKEN" \
         -d @CURL-ACC-Hook-MARIADB.json
@@ -151,12 +155,18 @@ cat > CURL-ACC-wphook-manage-app.json << EOF
 }
 EOF
 
-MANAGEAPP=$(curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8S/v2/apps" \
+MANAGEAPP=$(curl -k -s -o /dev/null -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
   -H 'accept: application/astra-app+json' -H 'Content-Type: application/astra-app+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-wphook-manage-app.json)
-
 WORDPRESSID=$(echo $MANAGEAPP | jq -r .id)
+
+STATE="waitasec"
+until [[ $STATE == "ready" ]]; do
+  WORDPRESSDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps/$WORDPRESSID" -H "Authorization: Bearer $APITOKEN")
+  STATE=$(echo $WORDPRESSDETAILS | jq -r .state)
+  sleep 2
+done
 
 echo
 echo "############################################"
@@ -184,7 +194,7 @@ cat > CURL-ACC-wphook-hook1.json << EOF
 }
 EOF
 
-curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8S/v1/apps/$WORDPRESSID/executionHooks" \
+curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-wphook-hook1.json
@@ -215,7 +225,7 @@ cat > CURL-ACC-wphook-hook2.json << EOF
 }
 EOF
 
-curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8S/v1/apps/$WORDPRESSID/executionHooks" \
+curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-wphook-hook2.json
@@ -247,7 +257,7 @@ cat > CURL-ACC-wphook-hook3.json << EOF
 }
 EOF
 
-curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8S/v1/apps/$WORDPRESSID/executionHooks" \
+curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-wphook-hook3.json
@@ -279,7 +289,12 @@ cat > CURL-ACC-wphook-hook4.json << EOF
 }
 EOF
 
-curl -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8S/v1/apps/$WORDPRESSID/executionHooks" \
+curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-wphook-hook4.json
+
+echo
+echo "#################################################"
+echo "# END OF THE SCRIPT"
+echo "#################################################"
