@@ -1,5 +1,5 @@
 #!/bin/bash
-# SCRIPT TO RUN ON THE JUMPHOST
+# SCRIPT TO RUN ON THE HELPER1 HOST
 
 # ACCOUNT ID    feb2b2c9-f3a7-4dec-a351-8ed73c0a44e0
 # RKE1 ID       601ff60e-1fcb-4f69-be89-2a2c4ca5a715
