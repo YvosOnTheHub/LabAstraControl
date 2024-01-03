@@ -17,6 +17,7 @@ fi
 
 ACCOUNTID=$1
 APITOKEN=$2
+frames="/ | \\ -"
 
 DIR="tmpscript"
 [ -d "$DIR" ] && rm -rf $DIR
@@ -166,7 +167,9 @@ STATE="waitasec"
 until [[ $STATE == "ready" ]]; do
   WORDPRESSDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps/$WORDPRESSID" -H "Authorization: Bearer $APITOKEN")
   STATE=$(echo $WORDPRESSDETAILS | jq -r .state)
-  sleep 2
+  for frame in $frames; do
+    sleep 1; printf "\rwaiting for the Wordpress app to be ready $frame"
+  done
 done
 
 echo
@@ -317,7 +320,9 @@ STATE="waitasec"
 until [[ $STATE == "completed" ]]; do
   SNAPSHOTDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appSnaps/$SNAPSHOTID" -H "Authorization: Bearer $APITOKEN")
   STATE=$(echo $SNAPSHOTDETAILS | jq -r .state)
-  sleep 5
+  for frame in $frames; do
+    sleep 1; printf "\rwaiting for the snapshot to be ready $frame"
+  done
 done
 
 echo
@@ -343,7 +348,9 @@ STATE="waitasec"
 until [[ $STATE == "completed" ]]; do
   BACKUPDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appBackups/$BACKUPID" -H "Authorization: Bearer $APITOKEN")
   STATE=$(echo $BACKUPDETAILS | jq -r .state)
-  sleep 5
+  for frame in $frames; do
+    sleep 1; printf "\rwaiting for the backup to be ready $frame"
+  done
 done
 
 

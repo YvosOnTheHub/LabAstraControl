@@ -17,6 +17,7 @@ fi
 
 ACCOUNTID=$1
 APITOKEN=$2
+frames="/ | \\ -"
 
 DIR="tmpscript"
 [ ! -d "$DIR" ] && mkdir $DIR && cd $DIR
@@ -57,7 +58,9 @@ STATE="waitasec"
 until [[ $STATE == "ready" ]]; do
   RESTOREDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps/$RESTOREID" -H "Authorization: Bearer $APITOKEN")
   STATE=$(echo $RESTOREDETAILS | jq -r .state)
-  sleep 2
+  for frame in $frames; do
+    sleep 1; printf "\rwaiting for the restore to be ready $frame"
+  done
 done
 
 echo

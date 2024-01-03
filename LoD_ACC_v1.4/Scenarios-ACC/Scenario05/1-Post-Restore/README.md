@@ -128,7 +128,7 @@ As expected, we are now using a image different from the source application, thi
 Both _restore_ hooks also write logs in a file located in the alpine pod folder /var/log/.  
 This can be useful to debug or follow up all the tasks performed during the restore proces.  
 ```bash
-$ kubectl exec -n wphook2 $(kubectl get pod -n wphook2 -l app.kubernetes.io/name=scenario05 -o name) -- more /var/log/acc-logs-hooks.log
+$ kubectl exec -n wphookrestore $(kubectl get pod -n wphookrestore -l app.kubernetes.io/name=scenario05 -o name) -- more /var/log/acc-logs-hooks.log
 Wed Dec 20 13:48:43 UTC 2023: ========= HOOK REPLICAS SCALE START ===========
 Wed Dec 20 13:48:43 UTC 2023: DEPLOYMENT TO SCALE: wordpress
 Wed Dec 20 13:48:43 UTC 2023: NUMBER OF REPLICAS: 1
