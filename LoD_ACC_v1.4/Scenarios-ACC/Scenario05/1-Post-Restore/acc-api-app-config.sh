@@ -33,7 +33,7 @@ HOOKFEATURE=$(echo $SETTINGS | jq -r '.items[] | select(.name == "astra.account.
 HOOKFEATURESTATUS=$(echo $HOOKFEATURE | jq -r .currentConfig.isEnabled)
 HOOKFEATUREID=$(echo $HOOKFEATURE | jq -r .id)
 
-if [ $HOOKFEATURESTATUS -eq 'false' ]; then
+if [ $HOOKFEATURESTATUS == 'false' ]; then
   cat > CURL-ACC-Hook-Enable.json << EOF
 {
   "desiredConfig": {"isEnabled": "true"},
@@ -157,7 +157,7 @@ cat > CURL-ACC-wphook-manage-app.json << EOF
 }
 EOF
 
-MANAGEAPP=$(curl -k -s -o /dev/null -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
+MANAGEAPP=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
   -H 'accept: application/astra-app+json' -H 'Content-Type: application/astra-app+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-wphook-manage-app.json)

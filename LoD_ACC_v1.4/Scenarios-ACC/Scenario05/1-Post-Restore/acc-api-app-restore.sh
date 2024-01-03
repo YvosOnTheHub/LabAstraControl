@@ -48,7 +48,7 @@ cat > CURL-ACC-wphook-restore-app.json << EOF
 }
 EOF
 
-RESTOREAPP=$(curl -k -s -o /dev/null -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
+RESTOREAPP=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
   -H 'accept: application/astra-app+json' -H 'Content-Type: application/astra-app+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-wphook-restore-app.json)

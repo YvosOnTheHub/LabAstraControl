@@ -36,7 +36,8 @@ Alternatively, you can use the _scenario05_wordpress_images.sh_ to if needed. It
 sh _scenario05-wordpress-images.sh my_login my_password
 ```
 
-Now let's create the wordpress instance on the first site (ie on cluster _RKE1_):
+Now let's create the wordpress instance on the first site (ie on cluster _RKE1_).  
+This process takes a couple of minutes:  
 ```bash
 rke1
 helm install wphook bitnami/wordpress --namespace wphook --create-namespace -f helm-wordpress-values.yaml
