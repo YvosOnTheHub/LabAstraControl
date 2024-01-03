@@ -4,6 +4,7 @@
 # ACCOUNT ID    feb2b2c9-f3a7-4dec-a351-8ed73c0a44e0
 # RKE1 ID       601ff60e-1fcb-4f69-be89-2a2c4ca5a715
 # RKE2 ID       4136e7b2-83ae-486a-932c-5258f11dea93
+# Bucket ID     0509922e-9919-49b6-8cde-5a930dcabd72
 
 if [ $# -eq 0 ]
   then
@@ -293,6 +294,58 @@ curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNT
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-wphook-hook4.json
+
+echo
+echo "#################################################"
+echo "# CREATE A SNAPSHOT OF THE APP"
+echo "#################################################"
+cat > CURL-ACC-wphook-snapshot.json << EOF
+{
+  "name": "snapshot1",
+  "type": "application/astra-appSnap",
+  "version": "1.2"
+}
+EOF
+
+SNAPSHOTPOST=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appSnaps" \
+  -H 'accept: application/astra-appSnap+json' -H 'Content-Type: application/astra-appSnap+json' \
+  -H "Authorization: Bearer $APITOKEN" \
+  -d @CURL-ACC-wphook-snapshot.json)
+SNAPSHOTID=$(echo $SNAPSHOTPOST | jq -r .id)
+
+STATE="waitasec"
+until [[ $STATE == "completed" ]]; do
+  SNAPSHOTDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appSnaps/$SNAPSHOTID" -H "Authorization: Bearer $APITOKEN")
+  STATE=$(echo $SNAPSHOTDETAILS | jq -r .state)
+  sleep 5
+done
+
+echo
+echo "#################################################"
+echo "# CREATE A BACKUP OF THE APP"
+echo "#################################################"
+cat > CURL-ACC-wphook-backup.json << EOF
+{
+  "name": "backup1",
+  "snapshotID": "$SNAPSHOTID",
+  "type": "application/astra-appBackup",
+  "version": "1.1"
+}
+EOF
+
+BACKUPPOST=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appBackups" \
+  -H 'accept: application/astra-appBackups+json' -H 'Content-Type: application/astra-appBackups+json' \
+  -H "Authorization: Bearer $APITOKEN" \
+  -d @CURL-ACC-wphook-backup.json)
+BACKUPID=$(echo $BACKUPPOST | jq -r .id)
+
+STATE="waitasec"
+until [[ $STATE == "completed" ]]; do
+  BACKUPDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appBackups/$BACKUPID" -H "Authorization: Bearer $APITOKEN")
+  STATE=$(echo $BACKUPDETAILS | jq -r .state)
+  sleep 5
+done
+
 
 echo
 echo "#################################################"

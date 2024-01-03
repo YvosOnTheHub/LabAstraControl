@@ -69,10 +69,13 @@ Next, the following steps need to be performed before the restore can be tested:
 - Create a snapshot of your app (optional)
 - Create a backup of your app based on the previous snapshot
 
-This can also be achieved through the GUI, or _using the script in this folder which calls the ACC API_ (**WORK IN PROGRESS**).  
+This can also be achieved through the GUI, or using the script in this folder which calls the ACC API (_acc-api-app-config.sh_).  
+This script takes 2 parameters: _Account ID_ & _API Token_. The [addenda01](../../../Addendum/Addenda01/) will guide you in the retrieval of both values.  
+The script will finish when the backup is completed & ready to use (it takes a few minutes).  
 
 Once this is done, this is what you can expect to see in the GUI:
 <p align="center"><img src="../Images/SC05-1-hooks-list.png"></p>
+<p align="center"><img src="../Images/SC05-1-backup-list.png"></p>
 
 Let's try to restore this application on the second cluster (rke2) in a new namespace _wphookrestore_.  
 This can be achieved via the GUI, or_using the script in the folder_ (**WORK IN PROGRESS**).  
