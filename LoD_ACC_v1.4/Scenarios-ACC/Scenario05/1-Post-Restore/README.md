@@ -81,7 +81,9 @@ Once this is done, this is what you can expect to see in the GUI:
 Let's try to restore this application on the second cluster (rke2) in a new namespace _wphookrestore_.  
 This can be achieved via the GUI, or using the script _acc-api-app-restore.sh_ in this folder.  
 Using the script follows the same path as the previous one, ie it takes the same 2 parameters & will end once the restored app process is complete.  
+
 You can also follow the restore process in the _Activity_ window of Astra Control.
+<p align="center"><img src="../Images/SC05-1-activity.png"></p>
 
 Once done, you can see a new application managed by Astra Control.
 You can also check via the cli that the hooks were correctly executed.  
