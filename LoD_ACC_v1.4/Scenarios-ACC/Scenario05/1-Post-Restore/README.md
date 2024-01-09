@@ -150,3 +150,12 @@ Wed Dec 20 13:48:44 UTC 2023:    TARGET TAG: site2
 Wed Dec 20 13:48:44 UTC 2023:    NEW IMAGE: registry.demo.netapp.com/bitnami/mariadb:site2
 Wed Dec 20 13:48:44 UTC 2023: ========= HOOK TAG REWRITE END ===========
 ```
+
+Optionnally, you can clean up your ACC environments and remove objects used in this scenario.  
+The script _acc-api-scenario-cleanup.sh_ will perform the following tasks:
+- unmanage the wphookrestore application 
+- unmanage the wphook application
+- delete the wphookrestore helm deployment
+- delete the wphook helm deployment
+- delete the wphookrestore namespace
+- delete the wphook helm namespace
