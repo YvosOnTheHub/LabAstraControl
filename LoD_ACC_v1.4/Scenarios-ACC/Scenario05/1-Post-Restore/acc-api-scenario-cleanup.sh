@@ -23,8 +23,8 @@ echo "############################################"
 echo "# RETRIEVE APP IDs"
 echo "############################################"
 
-WORDPRESSID=$(curl -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps?include=id&filter=name%20eq%20%27wphook%27" -H "Authorization: Bearer $APITOKEN" | jq -r .items[0][0])
-WORDPRESSRESTOREID=$(curl -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps?include=id&filter=name%20eq%20%27wphookrestore%27" -H "Authorization: Bearer $APITOKEN" | jq -r .items[0][0])
+WORDPRESSID=$(curl -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps?include=id&filter=name%20eq%20%27wpbrhook%27" -H "Authorization: Bearer $APITOKEN" | jq -r .items[0][0])
+WORDPRESSRESTOREID=$(curl -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps?include=id&filter=name%20eq%20%27wpbrhookrestore%27" -H "Authorization: Bearer $APITOKEN" | jq -r .items[0][0])
 
 echo
 echo "############################################"
@@ -36,18 +36,18 @@ curl -X DELETE "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps/$W
 
 echo
 echo "############################################"
-echo "# DELETE WPHOOKRESTORE ON RKE2"
+echo "# DELETE WPBRHOOKRESTORE ON RKE2"
 echo "############################################"
 export KUBECONFIG=/root/kubeconfigs/rke2/kube_config_cluster.yml
-helm delete wphook -n wphookrestore
-kubectl patch -n wphookrestore rolebinding kubectl-ns-admin-sa -p '{"metadata":{"finalizers":[]}}' --type='merge'
-kubectl delete ns wphookrestore
+helm delete wpbrhook -n wpbrhookrestore
+kubectl patch -n wpbrhookrestore rolebinding kubectl-ns-admin-sa -p '{"metadata":{"finalizers":[]}}' --type='merge'
+kubectl delete ns wpbrhookrestore
 
 echo
 echo "############################################"
-echo "# DELETE WPHOOK ON RKE1"
+echo "# DELETE WPBRHOOK ON RKE1"
 echo "############################################"
 export KUBECONFIG=/root/kubeconfigs/rke1/kube_config_cluster.yml
-helm delete wphook -n wphook
-kubectl patch -n wphook rolebinding kubectl-ns-admin-sa -p '{"metadata":{"finalizers":[]}}' --type='merge'
-kubectl delete ns wphook
+helm delete wpbrhook -n wpbrhook
+kubectl patch -n wpbrhook rolebinding kubectl-ns-admin-sa -p '{"metadata":{"finalizers":[]}}' --type='merge'
+kubectl delete ns wpbrhook

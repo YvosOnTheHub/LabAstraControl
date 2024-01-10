@@ -40,16 +40,16 @@ Now let's create the wordpress instance on the first site (ie on cluster _RKE1_)
 This process takes a couple of minutes:  
 ```bash
 rke1
-helm install wphook bitnami/wordpress --namespace wphook --create-namespace -f helm-wordpress-values.yaml
+helm install wpbrhook bitnami/wordpress --namespace wpbrhook --create-namespace -f helm-wordpress-values.yaml
 ```
 
 Now, let's look at the images used by this new app:
 ```bash
-$ kubectl get pods -n wphook -l app.kubernetes.io/instance=wphook -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{.spec.containers[0].image}{end}'; echo
+$ kubectl get pods -n wpbrhook -l app.kubernetes.io/instance=wpbrhook -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{.spec.containers[0].image}{end}'; echo
 
-wphook-mariadb-0:	registry.demo.netapp.com/bitnami/mariadb:site1
-wphook-wordpress-5b84766647-kfq69:	registry.demo.netapp.com/bitnami/wordpress:site1
-wphook-wordpress-5b84766647-l25tf:	registry.demo.netapp.com/bitnami/wordpress:site1
+wpbrhook-mariadb-0:	registry.demo.netapp.com/bitnami/mariadb:site1
+wpbrhook-wordpress-5b84766647-kfq69:	registry.demo.netapp.com/bitnami/wordpress:site1
+wpbrhook-wordpress-5b84766647-l25tf:	registry.demo.netapp.com/bitnami/wordpress:site1
 ```
 We can see we are using images tagged with "site1".  
 
@@ -78,7 +78,7 @@ Once this is done, this is what you can expect to see in the GUI:
 <p align="center"><img src="../Images/SC05-1-hooks-list.png"></p>
 <p align="center"><img src="../Images/SC05-1-backup-list.png"></p>
 
-Let's try to restore this application on the second cluster (rke2) in a new namespace _wphookrestore_.  
+Let's try to restore this application on the second cluster (rke2) in a new namespace _wpbrhookrestore_.  
 This can be achieved via the GUI, or using the script _acc-api-app-restore.sh_ in this folder.  
 Using the script follows the same path as the previous one, ie it takes the same 2 parameters & will end once the restored app process is complete.  
 
@@ -89,31 +89,31 @@ Once done, you can see a new application managed by Astra Control.
 You can also check via the cli that the hooks were correctly executed.  
 ```bash
 $ rke2
-$ kubectl get -n wphookrestore all,pvc
-NAME                                         READY   STATUS    RESTARTS      AGE
-pod/astra-hook-deployment-7b6cb87cff-wqn76   1/1     Running   0             43m
-pod/wphook-mariadb-0                         1/1     Running   0             43m
-pod/wphook-wordpress-5f486bf79d-xxrhd        1/1     Running   1 (42m ago)   43m
+$ kubectl get -n wpbrhookrestore all,pvc
+NAME                                           READY   STATUS    RESTARTS      AGE
+pod/astra-hook-deployment-7b6cb87cff-wqn76     1/1     Running   0             43m
+pod/wpbrhook-mariadb-0                         1/1     Running   0             43m
+pod/wpbrhook-wordpress-5f486bf79d-xxrhd        1/1     Running   1 (42m ago)   43m
 
-NAME                       TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
-service/wphook-mariadb     ClusterIP      172.28.32.16   <none>          3306/TCP                     43m
-service/wphook-wordpress   LoadBalancer   172.28.72.61   192.168.0.232   80:30009/TCP,443:31750/TCP   43m
+NAME                         TYPE           CLUSTER-IP     EXTERNAL-IP     PORT(S)                      AGE
+service/wpbrhook-mariadb     ClusterIP      172.28.32.16   <none>          3306/TCP                     43m
+service/wpbrhook-wordpress   LoadBalancer   172.28.72.61   192.168.0.232   80:30009/TCP,443:31750/TCP   43m
 
-NAME                                    READY   UP-TO-DATE   AVAILABLE   AGE
-deployment.apps/astra-hook-deployment   1/1     1            1           43m
-deployment.apps/wphook-wordpress        1/1     1            1           43m
+NAME                                      READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/astra-hook-deployment     1/1     1            1           43m
+deployment.apps/wpbrhook-wordpress        1/1     1            1           43m
 
 NAME                                               DESIRED   CURRENT   READY   AGE
 replicaset.apps/astra-hook-deployment-7b6cb87cff   1         1         1       43m
-replicaset.apps/wphook-wordpress-5b84766647        0         0         0       43m
-replicaset.apps/wphook-wordpress-5f486bf79d        1         1         1       43m
+replicaset.apps/wpbrhook-wordpress-5b84766647        0         0         0       43m
+replicaset.apps/wpbrhook-wordpress-5f486bf79d        1         1         1       43m
 
-NAME                              READY   AGE
-statefulset.apps/wphook-mariadb   1/1     43m
+NAME                                READY   AGE
+statefulset.apps/wpbrhook-mariadb   1/1     43m
 
-NAME                                          STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-persistentvolumeclaim/data-wphook-mariadb-0   Bound    pvc-3343c712-1852-435e-8b01-1683c86c8e8a   8Gi        RWX            sc-nas-svm2    45m
-persistentvolumeclaim/wphook-wordpress        Bound    pvc-2096b9b2-5c74-4192-b7bc-40c3c615226e   10Gi       RWX            sc-nas-svm2    45m
+NAME                                            STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+persistentvolumeclaim/data-wpbrhook-mariadb-0   Bound    pvc-3343c712-1852-435e-8b01-1683c86c8e8a   8Gi        RWX            sc-nas-svm2    45m
+persistentvolumeclaim/wpbrhook-wordpress        Bound    pvc-2096b9b2-5c74-4192-b7bc-40c3c615226e   10Gi       RWX            sc-nas-svm2    45m
 ```
 
 The restore process worked !
@@ -121,30 +121,30 @@ And as you can see, the Wordpress deployment scaled down to **one replica** as e
 
 Let's now check the images used by this new app:
 ```bash
-$ kubectl get pods -n wphookrestore -l app.kubernetes.io/instance=wphook -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{.spec.containers[0].image}{end}'; echo
+$ kubectl get pods -n wpbrhookrestore -l app.kubernetes.io/instance=wpbrhook -o=jsonpath='{range .items[*]}{"\n"}{.metadata.name}{":\t"}{.spec.containers[0].image}{end}'; echo
 
-wphook-mariadb-0:	registry.demo.netapp.com/bitnami/mariadb:site2
-wphook-wordpress-5f486bf79d-xxrhd:	registry.demo.netapp.com/bitnami/wordpress:site2
+wpbrhook-mariadb-0:	registry.demo.netapp.com/bitnami/mariadb:site2
+wpbrhook-wordpress-5f486bf79d-xxrhd:	registry.demo.netapp.com/bitnami/wordpress:site2
 ```
 As expected, we are now using a image different from the source application, this time tagged with **site2**.
 
 Both _restore_ hooks also write logs in a file located in the alpine pod folder /var/log/.  
 This can be useful to debug or follow up all the tasks performed during the restore proces.  
 ```bash
-$ kubectl exec -n wphookrestore $(kubectl get pod -n wphookrestore -l app.kubernetes.io/name=scenario05 -o name) -- more /var/log/acc-logs-hooks.log
+$ kubectl exec -n wpbrhookrestore $(kubectl get pod -n wpbrhookrestore -l app.kubernetes.io/name=scenario05 -o name) -- more /var/log/acc-logs-hooks.log
 Wed Dec 20 13:48:43 UTC 2023: ========= HOOK REPLICAS SCALE START ===========
 Wed Dec 20 13:48:43 UTC 2023: DEPLOYMENT TO SCALE: wordpress
 Wed Dec 20 13:48:43 UTC 2023: NUMBER OF REPLICAS: 1
-Wed Dec 20 13:48:43 UTC 2023: KUBERNETES DEPLOY NAME: wphook-wordpress
+Wed Dec 20 13:48:43 UTC 2023: KUBERNETES DEPLOY NAME: wpbrhook-wordpress
 Wed Dec 20 13:48:43 UTC 2023: ========= HOOK REPLICAS SCALE END ===========
 Wed Dec 20 13:48:44 UTC 2023: ========= HOOK TAG REWRITE START ===========
 Wed Dec 20 13:48:44 UTC 2023: PARAMETER1: site1
 Wed Dec 20 13:48:44 UTC 2023: PARAMETER2: site2
-Wed Dec 20 13:48:44 UTC 2023: OBJECT TO SWAP: deploy wphook-wordpress : container 'wordpress'
+Wed Dec 20 13:48:44 UTC 2023: OBJECT TO SWAP: deploy wpbrhook-wordpress : container 'wordpress'
 Wed Dec 20 13:48:44 UTC 2023:    INITIAL IMAGE: registry.demo.netapp.com/bitnami/wordpress:site1
 Wed Dec 20 13:48:44 UTC 2023:    TARGET TAG: site2
 Wed Dec 20 13:48:44 UTC 2023:    NEW IMAGE: registry.demo.netapp.com/bitnami/wordpress:site2
-Wed Dec 20 13:48:44 UTC 2023: OBJECT TO SWAP: sts wphook-mariadb: container 'mariadb'
+Wed Dec 20 13:48:44 UTC 2023: OBJECT TO SWAP: sts wpbrhook-mariadb: container 'mariadb'
 Wed Dec 20 13:48:44 UTC 2023:    INITIAL IMAGE: registry.demo.netapp.com/bitnami/mariadb:site1
 Wed Dec 20 13:48:44 UTC 2023:    TARGET TAG: site2
 Wed Dec 20 13:48:44 UTC 2023:    NEW IMAGE: registry.demo.netapp.com/bitnami/mariadb:site2
@@ -153,9 +153,9 @@ Wed Dec 20 13:48:44 UTC 2023: ========= HOOK TAG REWRITE END ===========
 
 Optionnally, you can clean up your ACC environments and remove objects used in this scenario.  
 The script _acc-api-scenario-cleanup.sh_ will perform the following tasks:
-- unmanage the wphookrestore application 
-- unmanage the wphook application
-- delete the wphookrestore helm deployment
-- delete the wphook helm deployment
-- delete the wphookrestore namespace
-- delete the wphook helm namespace
+- unmanage the wpbrhookrestore application 
+- unmanage the wpbrhook application
+- delete the wpbrhookrestore helm deployment
+- delete the wpbrhook helm deployment
+- delete the wpbrhookrestore namespace
+- delete the wpbrhook helm namespace

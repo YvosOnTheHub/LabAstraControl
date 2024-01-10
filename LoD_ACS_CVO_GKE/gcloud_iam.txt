@@ -1,0 +1,22 @@
+#######################################################################################
+# CREATE A SERVICE ACCOUNT
+#######################################################################################
+gcloud iam service-accounts create lod-astra
+
+#######################################################################################
+# ADD ROLES TO THE SA (REPLACE rt12345678 WITH YOUR PROJECT ID)
+#######################################################################################
+gcloud projects add-iam-policy-binding rt12345678 --member=serviceAccount:lod-astra@rt12345678.iam.gserviceaccount.com --role=roles/compute.networkViewer --condition=None
+gcloud projects add-iam-policy-binding rt12345678 --member=serviceAccount:lod-astra@rt12345678.iam.gserviceaccount.com --role=roles/container.admin --condition=None
+gcloud projects add-iam-policy-binding rt12345678 --member=serviceAccount:lod-astra@rt12345678.iam.gserviceaccount.com --role=roles/serviceusage.serviceUsageViewer --condition=None
+gcloud projects add-iam-policy-binding rt12345678 --member=serviceAccount:lod-astra@rt12345678.iam.gserviceaccount.com --role=roles/storage.admin --condition=None
+
+#######################################################################################
+# VALIDATE THE SA (REPLACE rt12345678 WITH YOUR PROJECT ID)
+#######################################################################################
+gcloud projects get-iam-policy rt12345678 --flatten="bindings[].members" --format="table(bindings.role)" --filter=bindings.members:lod-astra@rt12345678.iam.gserviceaccount.com
+
+#######################################################################################
+# CREATE A KEY (REPLACE rt12345678 WITH YOUR PROJECT ID)
+#######################################################################################
+gcloud iam service-accounts keys create lod-astra_keys.json --iam-account=lod-astra@rt12345678.iam.gserviceaccount.com

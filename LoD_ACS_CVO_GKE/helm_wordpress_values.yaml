@@ -1,0 +1,21 @@
+global: 
+  storageClass: cvo-cm
+
+wordpressUsername: admin
+wordpressPassword: Netapp1!
+wordpressEmail: admin@demo.netapp.com
+
+persistence:
+  accessModes:
+    - ReadWriteMany
+    
+mariadb:
+  auth:
+    rootPassword: "Netapp1!"
+    database: bitnami_wordpress
+    username: bn_wordpress
+    password: "Netapp1!"
+  primary:
+    persistence:
+      accessModes:
+        - ReadWriteMany

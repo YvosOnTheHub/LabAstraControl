@@ -147,11 +147,11 @@ echo "############################################"
 echo "# MANAGE THE WORDPRESS APP"
 echo "############################################"
 
-cat > CURL-ACC-wphook-manage-app.json << EOF
+cat > CURL-ACC-wpbrhook-manage-app.json << EOF
 {
   "clusterID": "601ff60e-1fcb-4f69-be89-2a2c4ca5a715",
-  "name": "wphook",
-  "namespaceScopedResources": [{"namespace": "wphook"}],
+  "name": "wpbrhook",
+  "namespaceScopedResources": [{"namespace": "wpbrhook"}],
   "type": "application/astra-app",
   "version": "2.2"
 }
@@ -160,7 +160,7 @@ EOF
 MANAGEAPP=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
   -H 'accept: application/astra-app+json' -H 'Content-Type: application/astra-app+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wphook-manage-app.json)
+  -d @CURL-ACC-wpbrhook-manage-app.json)
 WORDPRESSID=$(echo $MANAGEAPP | jq -r .id)
 
 STATE="waitasec"
@@ -176,7 +176,7 @@ echo
 echo "############################################"
 echo "# ADD A PRESNAPSHOT HOOK FOR MARIADB"
 echo "############################################"
-cat > CURL-ACC-wphook-hook1.json << EOF
+cat > CURL-ACC-wpbrhook-hook1.json << EOF
 {
   "type": "application/astra-executionHook",
   "version": "1.3",
@@ -201,13 +201,13 @@ EOF
 curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wphook-hook1.json
+  -d @CURL-ACC-wpbrhook-hook1.json
 
 echo
 echo "############################################"
 echo "# ADD A POSTSNAPSHOT HOOK FOR MARIADB"
 echo "############################################"
-cat > CURL-ACC-wphook-hook2.json << EOF
+cat > CURL-ACC-wpbrhook-hook2.json << EOF
 {
   "type": "application/astra-executionHook",
   "version": "1.3",
@@ -232,13 +232,13 @@ EOF
 curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wphook-hook2.json
+  -d @CURL-ACC-wpbrhook-hook2.json
 
 echo
 echo "################################################"
 echo "# ADD THE FIRST POSTRESTORE HOOK FOR WORDPRESS"
 echo "################################################"
-cat > CURL-ACC-wphook-hook3.json << EOF
+cat > CURL-ACC-wpbrhook-hook3.json << EOF
 {
   "type": "application/astra-executionHook",
   "version": "1.3",
@@ -264,13 +264,13 @@ EOF
 curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wphook-hook3.json
+  -d @CURL-ACC-wpbrhook-hook3.json
 
 echo
 echo "#################################################"
 echo "# ADD THE SECOND POSTRESTORE HOOK FOR WORDPRESS"
 echo "#################################################"
-cat > CURL-ACC-wphook-hook4.json << EOF
+cat > CURL-ACC-wpbrhook-hook4.json << EOF
 {
   "type": "application/astra-executionHook",
   "version": "1.3",
@@ -296,13 +296,13 @@ EOF
 curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wphook-hook4.json
+  -d @CURL-ACC-wpbrhook-hook4.json
 
 echo
 echo "#################################################"
 echo "# CREATE A SNAPSHOT OF THE APP"
 echo "#################################################"
-cat > CURL-ACC-wphook-snapshot.json << EOF
+cat > CURL-ACC-wpbrhook-snapshot.json << EOF
 {
   "name": "snapshot1",
   "type": "application/astra-appSnap",
@@ -313,7 +313,7 @@ EOF
 SNAPSHOTPOST=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appSnaps" \
   -H 'accept: application/astra-appSnap+json' -H 'Content-Type: application/astra-appSnap+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wphook-snapshot.json)
+  -d @CURL-ACC-wpbrhook-snapshot.json)
 SNAPSHOTID=$(echo $SNAPSHOTPOST | jq -r .id)
 
 STATE="waitasec"
@@ -329,7 +329,7 @@ echo
 echo "#################################################"
 echo "# CREATE A BACKUP OF THE APP"
 echo "#################################################"
-cat > CURL-ACC-wphook-backup.json << EOF
+cat > CURL-ACC-wpbrhook-backup.json << EOF
 {
   "name": "backup1",
   "snapshotID": "$SNAPSHOTID",
@@ -341,7 +341,7 @@ EOF
 BACKUPPOST=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appBackups" \
   -H 'accept: application/astra-appBackups+json' -H 'Content-Type: application/astra-appBackups+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wphook-backup.json)
+  -d @CURL-ACC-wpbrhook-backup.json)
 BACKUPID=$(echo $BACKUPPOST | jq -r .id)
 
 STATE="waitasec"
