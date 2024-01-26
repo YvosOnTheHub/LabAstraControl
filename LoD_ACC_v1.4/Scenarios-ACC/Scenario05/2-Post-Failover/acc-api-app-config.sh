@@ -25,40 +25,15 @@ mkdir $DIR && cd $DIR
 
 echo
 echo "############################################"
-echo "# ENABLE HOOKS IF NEEDED"
+echo "# ADD POST-FAILOVER REPLICAS HOOK TO ACC"
 echo "############################################"
 
-SETTINGS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/core/v1/settings" -H "Authorization: Bearer $APITOKEN")
-HOOKFEATURE=$(echo $SETTINGS | jq -r '.items[] | select(.name == "astra.account.executionHooks.enabled")')
-HOOKFEATURESTATUS=$(echo $HOOKFEATURE | jq -r .currentConfig.isEnabled)
-HOOKFEATUREID=$(echo $HOOKFEATURE | jq -r .id)
-
-if [ $HOOKFEATURESTATUS == 'false' ]; then
-  cat > CURL-ACC-Hook-Enable.json << EOF
-{
-  "desiredConfig": {"isEnabled": "true"},
-  "type": "application/astra-setting",
-  "version": "1.1"
-}
-EOF
-
-  curl -k -s -X PUT "https://astra.demo.netapp.com/accounts/$ACCOUNTID/core/v1/settings/$HOOKFEATUREID" \
-  -H 'accept: application/astra-setting+json' -H 'Content-Type: application/astra-setting+json' \
-  -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-Hook-Enable.json
-fi
-
-echo
-echo "############################################"
-echo "# ADD POST-RESTORE REPLICAS HOOK TO ACC"
-echo "############################################"
-
-HOOKREPLICAS=$(base64 -w 0 ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario05/1-Post-Restore/hook-restore-replicas.sh)
+HOOKREPLICAS=$(base64 -w 0 ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario05/2-Post-Failover/hook-failover-replicas.sh)
 
 cat > CURL-ACC-Hook-REPLICAS.json << EOF
 {
-  "description": "Post-restore hook to modify the number of replicas",
-  "name": "PR-Replicas",
+  "description": "Post-failover hook to modify the number of replicas",
+  "name": "PF-Replicas",
   "source": "$HOOKREPLICAS",
   "sourceType": "script",
   "type": "application/astra-hookSource",
@@ -76,12 +51,12 @@ echo "############################################"
 echo "# ADD POST-RESTORE TAG UPDATE HOOK TO ACC"
 echo "############################################"
 
-HOOKTAGS=$(base64 -w 0 ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario05/1-Post-Restore/hook-restore-tag-rewrite.sh)
+HOOKTAGS=$(base64 -w 0 ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario05/2-Post-Failover/hook-failover-tag-rewrite.sh)
 
 cat > CURL-ACC-Hook-TAGS.json << EOF
 {
-  "description": "Post-restore hook to modify the target images tag",
-  "name": "PR-Tags-Update",
+  "description": "Post-failover hook to modify the target images tag",
+  "name": "PF-Tags-Update",
   "source": "$HOOKTAGS",
   "sourceType": "script",
   "type": "application/astra-hookSource",
@@ -147,11 +122,11 @@ echo "############################################"
 echo "# MANAGE THE WORDPRESS APP"
 echo "############################################"
 
-cat > CURL-ACC-wpbr-manage-app.json << EOF
+cat > CURL-ACC-wpf-manage-app.json << EOF
 {
   "clusterID": "601ff60e-1fcb-4f69-be89-2a2c4ca5a715",
-  "name": "wpbr",
-  "namespaceScopedResources": [{"namespace": "wpbr"}],
+  "name": "wpf",
+  "namespaceScopedResources": [{"namespace": "wpf"}],
   "type": "application/astra-app",
   "version": "2.2"
 }
@@ -160,7 +135,7 @@ EOF
 MANAGEAPP=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v2/apps" \
   -H 'accept: application/astra-app+json' -H 'Content-Type: application/astra-app+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wpbr-manage-app.json)
+  -d @CURL-ACC-wpf-manage-app.json)
 WORDPRESSID=$(echo $MANAGEAPP | jq -r .id)
 
 STATE="waitasec"
@@ -176,7 +151,7 @@ echo
 echo "############################################"
 echo "# ADD A PRESNAPSHOT HOOK FOR MARIADB"
 echo "############################################"
-cat > CURL-ACC-wpbr-hook1.json << EOF
+cat > CURL-ACC-wpf-hook1.json << EOF
 {
   "type": "application/astra-executionHook",
   "version": "1.3",
@@ -201,13 +176,13 @@ EOF
 curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wpbr-hook1.json
+  -d @CURL-ACC-wpf-hook1.json
 
 echo
 echo "############################################"
 echo "# ADD A POSTSNAPSHOT HOOK FOR MARIADB"
 echo "############################################"
-cat > CURL-ACC-wpbr-hook2.json << EOF
+cat > CURL-ACC-wpf-hook2.json << EOF
 {
   "type": "application/astra-executionHook",
   "version": "1.3",
@@ -232,19 +207,19 @@ EOF
 curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wpbr-hook2.json
+  -d @CURL-ACC-wpf-hook2.json
 
 echo
 echo "################################################"
-echo "# ADD THE FIRST POSTRESTORE HOOK FOR WORDPRESS"
+echo "# ADD THE FIRST POSTFAILOVER HOOK FOR WORDPRESS"
 echo "################################################"
-cat > CURL-ACC-wpbr-hook3.json << EOF
+cat > CURL-ACC-wpf-hook3.json << EOF
 {
   "type": "application/astra-executionHook",
   "version": "1.3",
   "name": "WordpressScale",
   "hookType": "custom",
-  "action": "restore",
+  "action": "failover",
   "stage": "post",
   "hookSourceID": "$HOOKREPLICASID",
   "arguments": [
@@ -264,19 +239,19 @@ EOF
 curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wpbr-hook3.json
+  -d @CURL-ACC-wpf-hook3.json
 
 echo
 echo "#################################################"
-echo "# ADD THE SECOND POSTRESTORE HOOK FOR WORDPRESS"
+echo "# ADD THE SECOND POSTFAILOVER HOOK FOR WORDPRESS"
 echo "#################################################"
-cat > CURL-ACC-wpbr-hook4.json << EOF
+cat > CURL-ACC-wpf-hook4.json << EOF
 {
   "type": "application/astra-executionHook",
   "version": "1.3",
   "name": "WordpressTags",
   "hookType": "custom",
-  "action": "restore",
+  "action": "failover",
   "stage": "post",
   "hookSourceID": "$HOOKTAGSID",
   "arguments": [
@@ -296,63 +271,41 @@ EOF
 curl -s -o /dev/null -k -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/executionHooks" \
   -H 'accept: application/astra-executionHook+json' -H 'Content-Type: application/astra-executionHook+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wpbr-hook4.json
+  -d @CURL-ACC-wpf-hook4.json
 
 echo
 echo "#################################################"
-echo "# CREATE A SNAPSHOT OF THE APP"
+echo "# CREATE THE MIRROR RELATIONSHIP"
 echo "#################################################"
-cat > CURL-ACC-wpbr-snapshot.json << EOF
+cat > CURL-ACC-wpf-replication.json << EOF
 {
-  "name": "snapshot1",
-  "type": "application/astra-appSnap",
-  "version": "1.2"
-}
-EOF
-
-SNAPSHOTPOST=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appSnaps" \
-  -H 'accept: application/astra-appSnap+json' -H 'Content-Type: application/astra-appSnap+json' \
-  -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wpbr-snapshot.json)
-SNAPSHOTID=$(echo $SNAPSHOTPOST | jq -r .id)
-
-STATE="waitasec"
-until [[ $STATE == "completed" ]]; do
-  SNAPSHOTDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appSnaps/$SNAPSHOTID" -H "Authorization: Bearer $APITOKEN")
-  STATE=$(echo $SNAPSHOTDETAILS | jq -r .state)
-  for frame in $frames; do
-    sleep 1; printf "\rwaiting for the snapshot to be ready $frame"
-  done
-done
-
-echo
-echo "#################################################"
-echo "# CREATE A BACKUP OF THE APP"
-echo "#################################################"
-cat > CURL-ACC-wpbr-backup.json << EOF
-{
-  "name": "backup1",
-  "snapshotID": "$SNAPSHOTID",
-  "type": "application/astra-appBackup",
+  "destinationClusterID": "4136e7b2-83ae-486a-932c-5258f11dea93",
+  namespaceMapping:[
+    {"clusterID": "601ff60e-1fcb-4f69-be89-2a2c4ca5a715", "namespaces": ["wpf"], "role": "source"},
+    {"clusterID": "4136e7b2-83ae-486a-932c-5258f11dea93", "namespaces": ["wpf"], "role": "destination"}
+  ],
+  "sourceAppID": "$WORDPRESSID",
+  "stateDesired": "established",
+  "storageClasses":[{ "clusterID": "4136e7b2-83ae-486a-932c-5258f11dea93", "role": "destination", "storageClassName": "sc-nas-svm2" }],
+  "type": "application/astra-appMirror",
   "version": "1.1"
 }
 EOF
 
-BACKUPPOST=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appBackups" \
-  -H 'accept: application/astra-appBackups+json' -H 'Content-Type: application/astra-appBackups+json' \
+MIRRORPOST=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appMirrors" \
+  -H 'accept: application/astra-appMirror+json' -H 'Content-Type: application/astra-appMirror+json' \
   -H "Authorization: Bearer $APITOKEN" \
-  -d @CURL-ACC-wpbr-backup.json)
-BACKUPID=$(echo $BACKUPPOST | jq -r .id)
+  -d @CURL-ACC-wpf-replication.json)
+MIRRORID=$(echo $MIRRORPOST | jq -r .id)
 
 STATE="waitasec"
-until [[ $STATE == "completed" ]]; do
-  BACKUPDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appBackups/$BACKUPID" -H "Authorization: Bearer $APITOKEN")
-  STATE=$(echo $BACKUPDETAILS | jq -r .state)
+until [[ $STATE == "established" ]]; do
+  MIRRORDETAILS=$(curl -k -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appMirrors/$MIRRORID" -H "Authorization: Bearer $APITOKEN")
+  STATE=$(echo $MIRRORDETAILS | jq -r .state)
   for frame in $frames; do
-    sleep 1; printf "\rwaiting for the backup to be ready $frame"
+    sleep 1; printf "\rwaiting for the mirror relationship to be ready $frame"
   done
 done
-
 
 echo
 echo "#################################################"
