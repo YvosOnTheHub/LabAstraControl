@@ -113,8 +113,8 @@ echo "############################################"
 echo "# GET HOOKS ID"
 echo "############################################"
 
-HOOKREPLICASID=$(echo $HOOKLIST | jq -r '.items[] | select(.name | contains("Replicas")) | .id')
-HOOKTAGSID=$(echo $HOOKLIST | jq -r '.items[] | select(.name | contains("Tags")) | .id')
+HOOKREPLICASID=$(echo $HOOKLIST | jq -r '.items[] | select(.name | contains("PF-Replicas")) | .id')
+HOOKTAGSID=$(echo $HOOKLIST | jq -r '.items[] | select(.name | contains("PF-Tags")) | .id')
 HOOKMARIADBID=$(echo $HOOKLIST | jq -r '.items[] | select(.name | contains("maria")) | .id')
 
 echo
