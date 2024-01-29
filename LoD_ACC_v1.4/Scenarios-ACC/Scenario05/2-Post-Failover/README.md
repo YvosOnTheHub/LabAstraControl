@@ -40,7 +40,7 @@ podman push registry.demo.netapp.com/bitnami/mariadb:site2
 ```
 Alternatively, you can use the _scenario05_wordpress_images.sh_ to if needed. It uses 2 **optional** parameters, your Docker Hub login & password:
 ```bash
-sh _scenario05-wordpress-images.sh my_login my_password
+sh scenario05-wordpress-images.sh my_login my_password
 ```
 
 Now let's create the wordpress instance on the first site (ie on cluster _RKE1_).  
@@ -84,7 +84,7 @@ Once this is done, this is what you can expect to see in the GUI:
 <p align="center"><img src="../Images/SC05-2-hooks-list.png"></p>
 <p align="center"><img src="../Images/SC05-2-replication.png"></p>
 
-Let's try to failover this application on the second cluster (rke2) in a new namespace _wpfdr_.  
+Let's try to failover this application on the second cluster (rke2) in a new namespace _wpf_.  
 This can be achieved via the GUI, or using the script _acc-api-app-failover.sh_ in this folder.  
 Using the script follows the same path as the previous one, ie it takes the same 2 parameters & will end once the restored app process is complete.  
 
@@ -137,7 +137,7 @@ As expected, we are now using a image different from the source application, thi
 Both _restore_ hooks also write logs in a file located in the alpine pod folder /var/log/.  
 This can be useful to debug or follow up all the tasks performed during the restore proces.  
 ```bash
-$ kubectl exec -n wpfdr $(kubectl get pod -n wpfdr -l app.kubernetes.io/name=scenario05 -o name) -- more /var/log/acc-logs-hooks.log
+$ kubectl exec -n wpf $(kubectl get pod -n wpf -l app.kubernetes.io/name=scenario05 -o name) -- more /var/log/acc-logs-hooks.log
 Wed Dec 20 13:48:43 UTC 2023: ========= HOOK REPLICAS SCALE START ===========
 Wed Dec 20 13:48:43 UTC 2023: APP TO SCALE: wordpress
 Wed Dec 20 13:48:43 UTC 2023: NUMBER OF REPLICAS: 1

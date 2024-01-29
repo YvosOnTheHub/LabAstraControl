@@ -280,10 +280,6 @@ echo "#################################################"
 cat > CURL-ACC-wpf-replication.json << EOF
 {
   "destinationClusterID": "4136e7b2-83ae-486a-932c-5258f11dea93",
-  namespaceMapping:[
-    {"clusterID": "601ff60e-1fcb-4f69-be89-2a2c4ca5a715", "namespaces": ["wpf"], "role": "source"},
-    {"clusterID": "4136e7b2-83ae-486a-932c-5258f11dea93", "namespaces": ["wpf"], "role": "destination"}
-  ],
   "sourceAppID": "$WORDPRESSID",
   "stateDesired": "established",
   "storageClasses":[{ "clusterID": "4136e7b2-83ae-486a-932c-5258f11dea93", "role": "destination", "storageClassName": "sc-nas-svm2" }],
@@ -292,7 +288,7 @@ cat > CURL-ACC-wpf-replication.json << EOF
 }
 EOF
 
-MIRRORPOST=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/apps/$WORDPRESSID/appMirrors" \
+MIRRORPOST=$(curl -k -s -X POST "https://astra.demo.netapp.com/accounts/$ACCOUNTID/k8s/v1/appMirrors" \
   -H 'accept: application/astra-appMirror+json' -H 'Content-Type: application/astra-appMirror+json' \
   -H "Authorization: Bearer $APITOKEN" \
   -d @CURL-ACC-wpf-replication.json)
