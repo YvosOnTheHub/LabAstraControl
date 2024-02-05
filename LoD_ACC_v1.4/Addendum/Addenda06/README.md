@@ -123,4 +123,4 @@ $ curl -s -X GET https://registry.demo.netapp.com:5000/v2/busybox/tags/list  -ku
   "tags": null
 }
 ```
-I find the _curl_ to be more error prone... However, it works out of the box.
+I find the _curl_ method to be more error prone... However, it works out of the box.
