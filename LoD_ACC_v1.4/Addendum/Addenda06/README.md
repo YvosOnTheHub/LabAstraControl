@@ -117,9 +117,10 @@ sha256:9231a8a1130e738b1c5c50014fcadb16c460826855eaa8574a18c598642e4ad9
 
 $ curl -s -ku registryuser:Netapp1! -X DELETE https://registry.demo.netapp.com:5000/v2/busybox/manifests/sha256:9231a8a1130e738b1c5c50014fcadb16c460826855eaa8574a18c598642e4ad9
 
-curl -s -X GET https://registry.demo.netapp.com:5000/v2/busybox/tags/list  -ku registryuser:Netapp1!  | jq
+$ curl -s -X GET https://registry.demo.netapp.com:5000/v2/busybox/tags/list  -ku registryuser:Netapp1!  | jq
 {
   "name": "busybox",
   "tags": null
 }
 ```
+I find the _curl_ to be more error prone... However, it works out of the box.
