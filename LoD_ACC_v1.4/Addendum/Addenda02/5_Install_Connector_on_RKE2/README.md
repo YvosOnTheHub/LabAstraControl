@@ -65,3 +65,33 @@ There is a new parameter called _Private Route Identifier_ which corresponds to 
 
 tadaaa!
 You can now try the new declarative management of resources!
+
+By the way, the connector comes alongside a whole bunch of CRD which are used to manage everything declaratively:
+```bash
+$ kubectl get crd | grep astra
+applications.astra.netapp.io                          2024-03-17T13:48:39Z
+appmirrorrelationships.astra.netapp.io                2024-03-17T13:48:39Z
+appmirrorupdates.astra.netapp.io                      2024-03-17T13:48:39Z
+appvaults.astra.netapp.io                             2024-03-17T13:48:39Z
+astraconnectors.astra.netapp.io                       2024-03-17T13:48:40Z
+autosupportbundles.astra.netapp.io                    2024-03-17T13:48:39Z
+autosupportbundleschedules.astra.netapp.io            2024-03-17T13:48:39Z
+backupinplacerestores.astra.netapp.io                 2024-03-17T13:48:39Z
+backuprestores.astra.netapp.io                        2024-03-17T13:48:39Z
+backups.astra.netapp.io                               2024-03-17T13:48:39Z
+exechooks.astra.netapp.io                             2024-03-17T13:48:39Z
+exechooksruns.astra.netapp.io                         2024-03-17T13:48:39Z
+pvccopies.astra.netapp.io                             2024-03-17T13:48:39Z
+pvcerases.astra.netapp.io                             2024-03-17T13:48:39Z
+resourcebackups.astra.netapp.io                       2024-03-17T13:48:39Z
+resourcedeletes.astra.netapp.io                       2024-03-17T13:48:39Z
+resourcerestores.astra.netapp.io                      2024-03-17T13:48:40Z
+resourcesummaryuploads.astra.netapp.io                2024-03-17T13:48:40Z
+resticvolumebackups.astra.netapp.io                   2024-03-17T13:48:40Z
+resticvolumerestores.astra.netapp.io                  2024-03-17T13:48:40Z
+schedules.astra.netapp.io                             2024-03-17T13:48:40Z
+shutdownsnapshots.astra.netapp.io                     2024-03-17T13:48:40Z
+snapshotinplacerestores.astra.netapp.io               2024-03-17T13:48:40Z
+snapshotrestores.astra.netapp.io                      2024-03-17T13:48:40Z
+snapshots.astra.netapp.io                             2024-03-17T13:48:40Z
+```
