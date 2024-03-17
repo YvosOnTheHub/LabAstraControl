@@ -1,5 +1,5 @@
 #########################################################################################
-# Addenda 2: Astra Connector installation
+# Addenda 2: Astra Connector installation (Tech preview)
 #########################################################################################
 
 Astra 24.02 introduced the Astra Connector to enable communication between a Kubernetes cluster & Astra Control.  
