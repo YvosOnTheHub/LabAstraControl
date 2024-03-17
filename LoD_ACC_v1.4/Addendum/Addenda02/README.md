@@ -10,6 +10,7 @@ You will find in this chapter procedures to:
 [2.](2_Upgrade_ACC_23.07_to_23.10) upgrade ACC from 23.07.0 to 23.10.0  
 [3.](3_Upgrade_Trident_23.10_to_24.02) upgrade Trident & ACP from 23.10 to 24.02  
 [4.](4_Upgrade_ACC_23.10_to_24.02) upgrade ACC from 23.10.0 to 24.02.0  
+[5.](5_Install_Connector_on_RKE2) install the AC Connector on RKE2  
 
 Astra Control Center 23.10 introduced the following features:  
 - B&R capability for _ontap-nas-economy_ workloads
