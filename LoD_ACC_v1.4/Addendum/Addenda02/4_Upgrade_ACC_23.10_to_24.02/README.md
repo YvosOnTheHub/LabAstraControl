@@ -1,34 +1,35 @@
 #########################################################################################
-# Addenda 2: Upgrade Astra Control to v23.10
+# Addenda 2: Upgrade Astra Control to v24.02
 #########################################################################################
 
-The procedure can be found on this [link](https://docs.netapp.com/us-en/astra-control-center-2310/use/upgrade-acc.html).  
+The procedure can be found on this [link](https://docs.netapp.com/us-en/astra-control-center/use/upgrade-acc.html).  
+
+**There is an option to install Astra Control without the need of a private registry.  
+This is not covered here, as the traditional method is used for the upgrade.**  
 
 The first step would be to locally download the Astra Control package, which can be found on this [link](https://mysupport.netapp.com/site/products/all/details/astra-control-center/downloads-tab). By default, it will be saved in the _Downloads_ folder on the lab jumphost.  
 
 You then need to transfer this file from the _jumphost_ to the host where the commands need to run (_helper1_), in the _tarballs_ folder:
 ```bash
-scp -p ~/Downloads/astra-control-center-23.10.0-68.tar.gz helper1:~/tarballs/
+scp -p ~/Downloads/astra-control-center-24.02.0-69.tar.gz helper1:~/tarballs/
 ```
 
 You can now go through each step manually, or use the _all_in_one.sh_ script available on this github repository.  
 The script must run on the _helper1_ host.  
 
-If you have not gone through the [Trident upgrade](../1_Upgrade_Trident_23.07_to_23.10), you first need to free some space:
+If you have not gone through the second [Trident upgrade](../3_Upgrade_Trident_23.10_to_24.02), you first need to free some space:
 ```bash
 rm -f ~/tarballs/astra-control-center-*.tar.gz
-rm -f ~/tarballs/trident-installer-21*.tar.gz
-rm -f ~/tarballs/trident-installer-22*.tar.gz
+rm -f ~/tarballs/trident-*.tar.gz
 rm -rf ~/acc/images
 podman images | grep localhost | awk '{print $1":"$2}' | xargs podman image rm
 podman images | grep registry | awk '{print $1":"$2}' | xargs podman image rm
-podman images | grep docker | awk '{print $1":"$2}' | xargs podman image rm
 ```
 
 Let' start by by unpacking the ACC package:
 ```bash
 cd
-tar -zxvf ~/tarballs/astra-control-center-23.10.0-68.tar.gz
+tar -zxvf ~/tarballs/astra-control-center-24.02.0-69.tar.gz
 ```
 
 The installation process will use the lab private registry for ACC's container images. Let's upload them (copy and paste the whole block):
@@ -37,7 +38,7 @@ podman login -u registryuser -p Netapp1! registry.demo.netapp.com
 
 export REGISTRY=registry.demo.netapp.com
 export PACKAGENAME=acc
-export PACKAGEVERSION=23.10.0-68
+export PACKAGEVERSION=24.02.0-69
 export DIRECTORYNAME=acc
 
 for astraImageFile in $(ls ${DIRECTORYNAME}/images/*.tar) ; do
@@ -104,8 +105,8 @@ $ kubectl -n netapp-acc patch acc/astra --type=json -p='[
     {"op":"add", "path":"/spec/crds", "value":{"shouldUpgrade": true}},
     {"op":"add", "path":"/spec/additionalValues/nautilus", "value":{"startupProbe": {"failureThreshold":600, "periodSeconds": 30}}},
     {"op":"add", "path":"/spec/additionalValues/polaris-keycloak", "value":{"livenessProbe":{"initialDelaySeconds":180},"readinessProbe":{"initialDelaySeconds":180}}},    
-    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/23.10.0-68"},
-    {"op":"replace", "path":"/spec/astraVersion","value":"23.10.0-68"}
+    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/24.02.0-69"},
+    {"op":"replace", "path":"/spec/astraVersion","value":"24.02.0-69"}
 ]'
 astracontrolcenter.astra.netapp.io/astra patched
 ```
@@ -117,3 +118,5 @@ Complete
 ```
 
 Tadaaa! You can now reconnect to the Astra Control GUI, using the same password as before (NetApp1!).  
+
+Last, the _all_in_one_23.10_to_24.02.sh_ script can be used to perform all these tasks. 

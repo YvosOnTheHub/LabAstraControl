@@ -2,15 +2,15 @@
 # SCRIPT TO RUN ON HELPER1
 
 # to run on the jumphost once the ACC package is downloaded
-# scp -p ~/Downloads/astra-control-center-23.10.0-68.tar.gz helper1:~/tarballs/
+# scp -p ~/Downloads/astra-control-center-24.02.0-69.tar.gz helper1:~/tarballs/
 
 cd
 echo "##########################"
 echo "# Check ACC package"
 echo "##########################"
-FILE=~/tarballs/astra-control-center-23.10.0-68.tar.gz
+FILE=~/tarballs/astra-control-center-24.02.0-69.tar.gz
 if [ ! -f "$FILE" ]; then
-    echo "Please download and transfer the ACC 23.10 package on the Helper1 host(folder 'tarballs') before moving on."
+    echo "Please download and transfer the ACC 24.02 package on the Helper1 host(folder 'tarballs') before moving on."
     exit 0
 fi
 
@@ -18,18 +18,16 @@ echo "##########################"
 echo "# Pre-work"
 echo "##########################"
 rm -f ~/tarballs/astra-control-center-*.tar.gz
-rm -f ~/tarballs/trident-installer-21*.tar.gz
-rm -f ~/tarballs/trident-installer-22*.tar.gz
+rm -f ~/tarballs/trident-*.tar.gz
 rm -rf ~/acc/images
 podman images | grep localhost | awk '{print $1":"$2}' | xargs podman image rm
 podman images | grep registry | awk '{print $1":"$2}' | xargs podman image rm
-podman images | grep docker | awk '{print $1":"$2}' | xargs podman image rm
-mv ~/acc ~/acc_23.07
+mv ~/acc ~/acc_23.10
 
 echo "##########################"
 echo "# Untar ACC package"
 echo "##########################"
-tar -zxvf ~/tarballs/astra-control-center-23.10.0-68.tar.gz
+tar -zxvf ~/tarballs/astra-control-center-24.02.0-69.tar.gz
 
 echo
 echo "##########################"
@@ -39,7 +37,7 @@ podman login -u registryuser -p Netapp1! registry.demo.netapp.com
 
 export REGISTRY=registry.demo.netapp.com
 export PACKAGENAME=acc
-export PACKAGEVERSION=23.10.0-68
+export PACKAGEVERSION=24.02.0-69
 export DIRECTORYNAME=acc
 
 for astraImageFile in $(ls ${DIRECTORYNAME}/images/*.tar) ; do
@@ -87,8 +85,8 @@ kubectl -n netapp-acc patch acc/astra --type=json -p='[
     {"op":"add", "path":"/spec/crds", "value":{"shouldUpgrade": true}},
     {"op":"add", "path":"/spec/additionalValues/nautilus", "value":{"startupProbe": {"failureThreshold":600, "periodSeconds": 30}}},
     {"op":"add", "path":"/spec/additionalValues/polaris-keycloak", "value":{"livenessProbe":{"initialDelaySeconds":180},"readinessProbe":{"initialDelaySeconds":180}}},    
-    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/23.10.0-68"},
-    {"op":"replace", "path":"/spec/astraVersion","value":"23.10.0-68"}
+    {"op":"replace", "path":"/spec/imageRegistry/name","value":"registry.demo.netapp.com/netapp/astra/acc/24.02.0-69"},
+    {"op":"replace", "path":"/spec/astraVersion","value":"24.02.0-69"}
 ]'
 sleep 60
 

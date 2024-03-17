@@ -3,7 +3,7 @@
 #########################################################################################
 
 This lab run Astra Trident v23.07.  
-Let's go through the process to upgrade Trident to v23.10 The procedure can be found on this [link](https://docs.netapp.com/us-en/trident/trident-managing-k8s/upgrade-operator.html#upgrade-a-manual-installation).  
+Let's go through the process to upgrade Trident to v23.10. The procedure can be found on this [link](https://docs.netapp.com/us-en/trident-2310/trident-managing-k8s/upgrade-operator.html).  
 
 The following procedure should be used on the _helper1_ host.  
 
