@@ -7,6 +7,7 @@ It also enables declarative management of Astra Control resources & workflows.
 
 This connector could be installed with or without a local private registry.  
 As ACC 24.02 was installed using the lab private repository, we will use the same method to install the connector on RKE2.  
+The connector's images are part of of the packages you downloaded to upgrade ACC to 24.02.  
 
 Before anything, we need to unmanage RKE2 in the current ACC Configuration.  
 You can perform this task by connecting to the GUI and browser to the "clusters" page.  
@@ -28,7 +29,8 @@ kubectl create secret generic astra-token --from-literal=apiToken=<API TOKEN> -n
 kubectl create secret docker-registry regcred --docker-username=registryuser --docker-password=Netapp1! -n astra-connector --docker-server=registry.demo.netapp.com
 ```
 
-We are now ready to deploy the connector:
+We are now ready to deploy the connector.  
+Just replace <ACCOUNT ID> with the according ID found in Astra Control.  
 ```bash
 $ cat << EOF > rke2_ac.yaml
 apiVersion: astra.netapp.io/v1
