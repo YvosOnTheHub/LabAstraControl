@@ -19,6 +19,7 @@ echo "# Unmanage RKE2"
 echo "#############################################"
 RKE2ID=$(curl -s -X GET "https://astra.demo.netapp.com/accounts/$ACCOUNTID/topology/v1/managedClusters" -H "Authorization: Bearer $APITOKEN" | jq -r '.items[] | select(.name=="rke2") | .id')
 curl -X DELETE "https://astra.demo.netapp.com/accounts/$ACCOUNTID/topology/v1/managedClusters/$RKE2ID" -H 'accept: */*' -H "Authorization: Bearer $APITOKEN"
+sleep 5
 
 echo
 echo "#############################################"
@@ -38,7 +39,7 @@ echo
 echo "#############################################"
 echo "# Deploy the Astra Connector"
 echo "#############################################"
-cat << EOF > rke2_ac.yaml
+cat << EOF | kubectl apply -f -
 apiVersion: astra.netapp.io/v1
 kind: AstraConnector
 metadata:
@@ -57,7 +58,6 @@ spec:
     secret: regcred
 EOF
 
-kubectl create -f rke2_ac.yaml
 sleep 10
 
 echo

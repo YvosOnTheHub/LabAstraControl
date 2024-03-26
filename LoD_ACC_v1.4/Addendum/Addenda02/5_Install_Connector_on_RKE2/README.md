@@ -97,3 +97,5 @@ snapshotinplacerestores.astra.netapp.io               2024-03-17T13:48:40Z
 snapshotrestores.astra.netapp.io                      2024-03-17T13:48:40Z
 snapshots.astra.netapp.io                             2024-03-17T13:48:40Z
 ```
+
+A script (_lod_acc_connector_rke2_install.sh_) is available in this folder to automate the complete installation of the connector.  
