@@ -1,0 +1,40 @@
+gitea:
+  admin:
+    username: "lod"
+    password: "Netapp1!"
+    email: "lod@demo.netapp.com"
+
+  config:
+    database:
+      DB_TYPE: postgres
+    session:
+      PROVIDER: db
+    cache:
+      ADAPTER: memory
+    queue:
+      TYPE: level
+    indexer:
+      ISSUE_INDEXER_TYPE: bleve
+      REPO_INDEXER_ENABLED: true
+
+persistence:
+  accessModes: 
+    - "ReadWriteMany"
+  storageClass: sc-nas-svm1
+
+service:
+  http:
+    type: NodePort
+    nodePort: 30000
+
+redis-cluster:
+  enabled: false
+
+postgresql-ha:
+  enabled: false
+
+postgresql:
+  enabled: true
+
+
+

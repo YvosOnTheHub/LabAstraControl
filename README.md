@@ -34,3 +34,4 @@ Addendum
 [4.](LoD_ACC_v1.4/Addendum/Addenda04) Complete the lab for NFS  
 [5.](LoD_ACC_v1.4/Addendum/Addenda05) How to use the Astra Control Toolkit  
 [6.](LoD_ACC_v1.4/Addendum/Addenda06) Container images management  
+[7.](LoD_ACC_v1.4/Addendum/Addenda07) Install extra tools  
