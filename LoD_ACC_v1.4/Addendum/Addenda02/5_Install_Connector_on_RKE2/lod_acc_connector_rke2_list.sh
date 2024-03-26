@@ -1,44 +1,34 @@
-rke2
+# function that displays the content of a connector CR only if there is something to display
+display_content_cr() {
+    crname=$1
+
+    if [[ $(kubectl get -n astra-connector $crname --ignore-not-found=true | wc -l) -ne 0 ]]; then
+        echo
+        echo "#############################################"
+        echo "# Astra Connector: $crname"
+        echo "#############################################"
+        kubectl get -n astra-connector $crname
+    fi
+}
+
+
+# make sure you are on the correct cluster
+export KUBECONFIG=/root/kubeconfigs/rke2/kube_config_cluster.yml
 
 echo
 echo "#############################################"
 echo "# Astra Connector status"
 echo "#############################################"
 kubectl get -n astra-connector astraconnector
-echo
 
-if [[ $(kubectl get -n astra-connector applications --ignore-not-found=true | wc -l) -ne 0 ]]; then
-  echo
-  echo "#############################################"
-  echo "# Astra Connector: applications"
-  echo "#############################################"
-  kubectl get -n astra-connector applications
-  echo
-fi
+# retrieve list of CR & put it in an array
+getcr=(`kubectl get crd -o name | grep astra | awk -F "\n" '{print $1}'`)
 
-if [[ $(kubectl get -n astra-connector snapshots --ignore-not-found=true | wc -l) -ne 0 ]]; then
-  echo
-  echo "#############################################"
-  echo "# Astra Connector: snapshots"
-  echo "#############################################"
-  kubectl get -n astra-connector snaphots
-  echo
-fi
-
-if [[ $(kubectl get -n astra-connector backups --ignore-not-found=true | wc -l) -ne 0 ]]; then
-  echo
-  echo "#############################################"
-  echo "# Astra Connector: backups"
-  echo "#############################################"
-  kubectl get -n astra-connector backups
-  echo
-fi
-
-if [[ $(kubectl get -n astra-connector schedules --ignore-not-found=true | wc -l) -ne 0 ]]; then
-  echo
-  echo "#############################################"
-  echo "# Astra Connector: schedules"
-  echo "#############################################"
-  kubectl get -n astra-connector schedules
-  echo
-fi
+# parse the array & display content if it exists
+for cr in ${getcr[@]}
+do
+    crname=$(echo $cr | awk -F '/' '{print $2}' | awk -F '.' '{print $1}')
+    if [ $crname != "astraconnectors" ]; then
+        display_content_cr "$crname"
+    fi
+done
