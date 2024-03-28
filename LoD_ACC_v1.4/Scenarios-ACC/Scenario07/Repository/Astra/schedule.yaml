@@ -1,0 +1,12 @@
+apiVersion: astra.netapp.io/v1
+kind: Schedule
+metadata:
+  name: sched
+  namespace: astra-connector
+spec:
+  applicationRef: wpconnector
+  appVaultRef: ontap-s3-astra-ec85f45c-04db-4a92-b2d7-80d401affcdb
+  backupRetention: "2"
+  snapshotRetention: "1"
+  granularity: hourly
+  minute: "10"

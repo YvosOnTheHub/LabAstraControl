@@ -1,5 +1,5 @@
 #########################################################################################
-# SCENARIO 6: Protect you app with the Astra connector (Tech Preview)
+# SCENARIO 6: Protect you app with the Astra connector manually (Tech Preview)
 #########################################################################################  
 
 Astra 24.02 released the Astra Connector which allows you to manage your applications declaratively.  

@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wordpress
+spec:
+  project: default
+  source:
+    repoURL: 'http://192.168.0.203:30000/demo/scenario07'
+    path: Wordpress
+    targetRevision: master
+  destination:
+    server: 'rke2'
+    namespace: wpargo
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
