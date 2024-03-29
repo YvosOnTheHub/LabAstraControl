@@ -116,8 +116,9 @@ sed -i "s/ontap-s3-astra-ec85f45c-04db-4a92-b2d7-80d401affcdb/$APPVAULT/" ~/Repo
 git adcom "updated the appvault ID"
 git push
 ```
-Check that the repo is up to date
+Check that the repo is up to date:
 <p align="center"><img src="Images/Gitea_repo_update.png"></p>
+
 Now, let's modify the ArgoCD CR to remove the exclude filter:  
 ```bash
 $ rke1
@@ -125,7 +126,7 @@ $ kubectl patch -n argocd application wordpress-protect --type=json -p='[{ "op":
 application.argoproj.io/wordpress-protect patched
 ```
 
-And finally check that ArgoCD has performed a new sync
+And finally check that ArgoCD has performed a new sync:
 <p align="center"><img src="Images/ArgoCD_wordpress_protect_update.png" width="768"></p>
 
 From there, depending on the schedule configured, you will see snapshots & backups showing up:  
