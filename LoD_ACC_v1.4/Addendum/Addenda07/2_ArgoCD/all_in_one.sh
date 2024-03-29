@@ -17,7 +17,8 @@ done
 
 ARGOCDIP=$(kubectl -n argocd get svc argocd-server -o jsonpath="{.status.loadBalancer.ingress[0].ip}")
 ARGOCDPWD=$(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d)
-#echo "ARGOCDIP: $ARGOCDIP - ARGOCDPWD: $ARGOCDPWD"
+echo "ARGOCDIP: $ARGOCDIP - ARGOCDPWD: $ARGOCDPWD"
+sleep 15
 
 argocd login $ARGOCDIP --username admin --password $ARGOCDPWD --insecure 
 
