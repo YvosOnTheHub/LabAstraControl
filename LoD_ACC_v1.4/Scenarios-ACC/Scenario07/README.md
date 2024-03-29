@@ -38,3 +38,6 @@ git commit -m "initial commit"
 git remote add origin http://192.168.0.203:30000/lod/scenario07.git
 git push -u origin master
 ```
+
+rke1
+kubectl create -f argocd_wordpress_deploy.yaml

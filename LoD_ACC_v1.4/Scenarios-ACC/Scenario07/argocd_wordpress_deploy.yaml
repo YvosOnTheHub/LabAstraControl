@@ -2,15 +2,20 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: wordpress
+  namespace: argocd
 spec:
   project: default
   source:
-    repoURL: 'http://192.168.0.203:30000/demo/scenario07'
+    repoURL: 'http://192.168.0.203:30000/lod/scenario07'
     path: Wordpress
     targetRevision: master
+    directory:
+      recurse: true
   destination:
-    server: 'rke2'
+    server: 'https://api.rke2.demo.netapp.com:6443'
     namespace: wpargo
   syncPolicy:
+    automated: {}
     syncOptions:
       - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
