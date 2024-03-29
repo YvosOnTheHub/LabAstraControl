@@ -118,7 +118,7 @@ git push
 ```
 Check that the repo is up to date
 <p align="center"><img src="Images/Gitea_repo_update.png"></p>
-Now, let's modify the ArgoCD CR to remove the exclude filter:
+Now, let's modify the ArgoCD CR to remove the exclude filter:  
 ```bash
 $ rke1
 $ kubectl patch -n argocd application wordpress-protect --type=json -p='[{ "op": "remove", "path": "/spec/source/directory/exclude"}]'
