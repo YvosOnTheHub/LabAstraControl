@@ -85,6 +85,9 @@ We defined in the _argocd_wordpress_protect.yaml_ file the following:
 - the directory to use in that repo (Astra)
 - the Kubernetes cluster where the app will be deployed (RKE2) 
 - the target namespace (astra-connector)  
+- exclude the _schedule.yaml_ file  
+
+In the current version, the Astra Connector will automatically create a CR for the object store (AppVault) once the first application CR is present. That is why the _schedule.yaml_ is excluded from the current process.  
 
 ```bash
 $ rke1
@@ -104,8 +107,8 @@ wpargo   2m36s
 As the Astra Connector is linked to Astra Control Center, you can also check that Wordpress appeared in the GUI:
 <p align="center"><img src="Images/ACC_wpargo.png" width="768"></p>
 
-In the current version, the Astra Connector will automatically create a CR for the object store (AppVault) once the first application CR is present. The _schedule.yaml_ file uploaded in the Gitea repo does not have the current value !!  
-Time to change that value, upload the file to the repo & let ArgoCD do its magic:  
+The _schedule.yaml_ file uploaded in the Gitea repo does not have the current value !!  
+Time to change that value, upload the file to the repo, modify the ArgoCD CR & let ArgoCD do its magic:  
 ```bash
 rke2
 APPVAULT=$(kubectl get appvault -n astra-connector -o name | awk -F '/' '{print $2}')
@@ -115,7 +118,14 @@ git push
 ```
 Check that the repo is up to date
 <p align="center"><img src="Images/Gitea_repo_update.png"></p>
-& that ArgoCD has performed a new sync
+Now, let's modify the ArgoCD CR to remove the exclude filter:
+```bash
+$ rke1
+$ kubectl patch -n argocd application wordpress-protect --type=json -p='[{ "op": "remove", "path": "/spec/source/directory/exclude"}]'
+application.argoproj.io/wordpress-protect patched
+```
+
+And finally check that ArgoCD has performed a new sync
 <p align="center"><img src="Images/ArgoCD_wordpress_protect_update.png" width="768"></p>
 
 From there, depending on the schedule configured, you will see snapshots & backups showing up:  

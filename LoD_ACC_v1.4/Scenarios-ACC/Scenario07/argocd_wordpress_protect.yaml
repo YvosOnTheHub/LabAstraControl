@@ -11,6 +11,7 @@ spec:
     targetRevision: master
     directory:
       recurse: true
+      exclude: schedule.yaml
   destination:
     server: 'https://api.rke2.demo.netapp.com:6443'
     namespace: astra-connector
