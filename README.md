@@ -19,7 +19,7 @@ Scenarios for Astra Control Center
 [4.](LoD_ACC_v1.4/Scenarios-ACC/Scenario04) Protect your app with the Astra toolkit  
 [5.](LoD_ACC_v1.4/Scenarios-ACC/Scenario05) Hook me up before you go-go!  
 [6.](LoD_ACC_v1.4/Scenarios-ACC/Scenario06) Protect your app with the Astra Connector manually  
-<!--[7.](LoD_ACC_v1.4/Scenarios-ACC/Scenario07) Protect your app with the Astra Connector with GitOps methodologies  -->
+[7.](LoD_ACC_v1.4/Scenarios-ACC/Scenario07) Protect your app with the Astra Connector with GitOps methodologies  
 <!--[7.](LoD_ACC_v1.4/Scenarios-ACC/Scenario07) Switching storage class  -->
 
 Scenarios for Astra Control Provisioner

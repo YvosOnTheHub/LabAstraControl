@@ -88,6 +88,7 @@ We defined in the _argocd_wordpress_protect.yaml_ file the following:
 - exclude the _schedule.yaml_ file  
 
 In the current version, the Astra Connector will automatically create a CR for the object store (AppVault) once the first application CR is present. That is why the _schedule.yaml_ is excluded from the current process.  
+An alternative would be to create your own **AppVault**, which is totally fine also.  
 
 ```bash
 $ rke1
