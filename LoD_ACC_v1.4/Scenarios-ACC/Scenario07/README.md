@@ -42,6 +42,28 @@ git push -u origin master
 ```
 <p align="center"><img src="Images/Gitea_repo_init.png"></p>
 
+Before moving to the application management, we first need to define an AppVault (ie _a S3 Bucket_) in the Astra Connector.  
+- you can create your own CR to connect to a bucket  
+- you can also wait for the first app to be created, at which moment, the connector will retrieve the default Bucket from Astra Control Center  
+
+We are going to use the first method and create our own with the help of ArgoCD.  
+Note that I stored the bucket secret in Gitea, which is not really what you would do in production...  
+```bash
+$ rke1
+$ kubectl create -f ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario07/argocd_astra_appvault.yaml
+application.argoproj.io/astra-appvault created
+```
+If all went well, you would see the app in the ArgoCD GUI:
+<p align="center"><img src="Images/ArgoCD_astra_appvault.png" width="512"></p>
+
+You can also see the result in the Astra Connector:
+```bash
+$ rke2
+$ kubectl get -n astra-connector appvault
+NAME                                                  AGE
+rke2-appvault                                         2m39s
+```
+
 Let's deploy a new application. Instead of creating it with Helm, we are going to use ArgoCD.  
 This could be done with the GUI or via the ArgoCD CRD, method used in the following example:  
 ```bash
@@ -75,34 +97,13 @@ persistentvolumeclaim/mysql-pvc   Bound    pvc-9dc10e4f-54a8-45fe-a7db-4765b53b6
 persistentvolumeclaim/wp-pvc      Bound    pvc-86ec7250-3566-48db-be92-107dd7e5eb88   20Gi       RWX            sc-nas-svm2    3m52s
 ```
 
-Before moving to the application management, we first need to define an AppVault (ie a S3 Bucket) in the Astra Connector.  
-- you can create your own CR to connect to a bucket  
-- you can also wait for the first app to be created, at which moment, the connector will retrieve the default Bucket from Astra Control Center  
-We are going to use the first method and create our own with the help of ArgoCD.  
-Note that I stored the bucket secret in Gitea, which is not really what you would do in production...  
-```bash
-$ rke1
-$ kubectl create -f ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario07/argocd_astra_appvault.yaml
-application.argoproj.io/astra-appvault created
-```
-If all went well, you would see the app in the ArgoCD GUI:
-<p align="center"><img src="Images/ArgoCD_astra_appvault.png" width="512"></p>
-
-You can also see the result in the Astra Connector:
-```bash
-$ rke2
-$ kubectl get -n astra-connector appvault
-NAME                                                  AGE
-rke2-appvault                                         2m39s
-```
-
 Time to protect this application!  
 The repo also has 2 files in the App_manage folder to create the following Astra CR:
 - _application.yaml_ to define Wordpress as an application to manage with Astra  
 - _schedule.yaml_ to automatically take snapshots & backups  
 
 We defined in the _argocd_wordpress_manage.yaml_ file the following:
-- the repo where the YAML manifests are stored ("http://192.168.0.203:30000/lod/scenario07")
+- the repo where the YAML manifests are stored ("ht<span>tp://</span>192.168.0.203:30000/lod/scenario07")
 - the directory to use in that repo (Wordpress/App_manage)
 - the Kubernetes cluster where the app will be deployed (RKE2) 
 - the target namespace (astra-connector)  
