@@ -72,7 +72,7 @@ $ kubectl create -f ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario07/argo
 application.argoproj.io/wordpress created
 ```
 In a nutshell, we defined in the _argocd_wordpress_deploy.yaml_ file the following:
-- the repo where the YAML manifests are stored ("http://192.168.0.203:30000/lod/scenario07")
+- the repo where the YAML manifests are stored ("ht<span>tp://</span>192.168.0.203:30000/lod/scenario07")
 - the directory to use in that repo (Wordpress/App_config)
 - the Kubernetes cluster where the app will be deployed (RKE2)  
 - the target namespace (wpargo)  
