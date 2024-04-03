@@ -5,7 +5,7 @@ metadata:
   namespace: astra-connector
 spec:
   applicationRef: wpargo
-  appVaultRef: ontap-s3-astra-ec85f45c-04db-4a92-b2d7-80d401affcdb
+  appVaultRef: rke2-appvault
   backupRetention: "2"
   snapshotRetention: "1"
   granularity: hourly

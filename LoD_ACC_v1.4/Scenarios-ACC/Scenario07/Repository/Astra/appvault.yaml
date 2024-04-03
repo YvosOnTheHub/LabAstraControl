@@ -1,0 +1,20 @@
+apiVersion: astra.netapp.io/v1
+kind: AppVault
+metadata:
+  name: rke2-appvault
+  namespace: astra-connector
+spec:
+  providerType: ontap-s3
+  providerConfig:
+    endpoint: s3.demo.netapp.com
+    bucketName: astra
+    secure: "false"
+  providerCredentials:
+    accessKeyID:
+      valueFromSecret:
+        name: s3-creds
+        key: accessKeyID
+    secretAccessKey:
+      valueFromSecret:
+        name: s3-creds
+        key: secretAccessKey

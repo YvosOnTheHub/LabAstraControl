@@ -51,12 +51,12 @@ application.argoproj.io/wordpress created
 ```
 In a nutshell, we defined in the _argocd_wordpress_deploy.yaml_ file the following:
 - the repo where the YAML manifests are stored ("http://192.168.0.203:30000/lod/scenario07")
-- the directory to use in that repo (Wordpress)
+- the directory to use in that repo (Wordpress/App_config)
 - the Kubernetes cluster where the app will be deployed (RKE2)  
 - the target namespace (wpargo)  
 
 If all went well, you would see the app in the ArgoCD GUI:
-<p align="center"><img src="Images/ArgoCD_wordpress_deploy.png" width="768"></p>
+<p align="center"><img src="Images/ArgoCD_wordpress_deploy.png" width="512"></p>
 
 As the CR was defined with an automated sync policy, the application will automatically appear on RKE2:
 ```bash
@@ -75,60 +75,58 @@ persistentvolumeclaim/mysql-pvc   Bound    pvc-9dc10e4f-54a8-45fe-a7db-4765b53b6
 persistentvolumeclaim/wp-pvc      Bound    pvc-86ec7250-3566-48db-be92-107dd7e5eb88   20Gi       RWX            sc-nas-svm2    3m52s
 ```
 
+Before moving to the application management, we first need to define an AppVault (ie a S3 Bucket) in the Astra Connector.  
+- you can create your own CR to connect to a bucket  
+- you can also wait for the first app to be created, at which moment, the connector will retrieve the default Bucket from Astra Control Center  
+We are going to use the first method and create our own with the help of ArgoCD.  
+Note that I stored the bucket secret in Gitea, which is not really what you would do in production...  
+```bash
+$ rke1
+$ kubectl create -f ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario07/argocd_astra_appvault.yaml
+application.argoproj.io/astra-appvault created
+```
+If all went well, you would see the app in the ArgoCD GUI:
+<p align="center"><img src="Images/ArgoCD_astra_appvault.png" width="512"></p>
+
+You can also see the result in the Astra Connector:
+```bash
+$ rke2
+$ kubectl get -n astra-connector appvault
+NAME                                                  AGE
+rke2-appvault                                         2m39s
+```
+
 Time to protect this application!  
-The repo also has 2 files to create the following Astra CR:
+The repo also has 2 files in the App_manage folder to create the following Astra CR:
 - _application.yaml_ to define Wordpress as an application to manage with Astra  
 - _schedule.yaml_ to automatically take snapshots & backups  
 
-We defined in the _argocd_wordpress_protect.yaml_ file the following:
+We defined in the _argocd_wordpress_manage.yaml_ file the following:
 - the repo where the YAML manifests are stored ("http://192.168.0.203:30000/lod/scenario07")
-- the directory to use in that repo (Astra)
+- the directory to use in that repo (Wordpress/App_manage)
 - the Kubernetes cluster where the app will be deployed (RKE2) 
 - the target namespace (astra-connector)  
-- exclude the _schedule.yaml_ file  
-
-In the current version, the Astra Connector will automatically create a CR for the object store (AppVault) once the first application CR is present. That is why the _schedule.yaml_ is excluded from the current process.  
-An alternative would be to create your own **AppVault**, which is totally fine also.  
 
 ```bash
 $ rke1
-$ kubectl create -f ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario07/argocd_wordpress_protect.yaml
-application.argoproj.io/wordpress-protect created
+$ kubectl create -f ~/LabAstraControl/LoD_ACC_v1.4/Scenarios-ACC/Scenario07/argocd_wordpress_manage.yaml
+application.argoproj.io/wordpress-manage created
 ```
 If all went well, you would see the app in the ArgoCD GUI:
-<p align="center"><img src="Images/ArgoCD_wordpress_protect.png" width="512"></p>
+<p align="center"><img src="Images/ArgoCD_wordpress_manage.png" width="512"></p>
 
-Also, using the CLI you will find a new Astra CR for Wordpress:
+Also, using the CLI you will find two new Astra CR for Wordpress:
 ```bash
 $ rke2
-$ kubectl get application -n astra-connector
-NAME     AGE
-wpargo   2m36s
+$ kubectl get application,schedule -n astra-connector
+NAME                                 AGE
+application.astra.netapp.io/wpargo   4m49s
+
+NAME                             AGE
+schedule.astra.netapp.io/sched   4m49s
 ```
 As the Astra Connector is linked to Astra Control Center, you can also check that Wordpress appeared in the GUI:
 <p align="center"><img src="Images/ACC_wpargo.png" width="768"></p>
-
-The _schedule.yaml_ file uploaded in the Gitea repo does not have the current value !!  
-Time to change that value, upload the file to the repo, modify the ArgoCD CR & let ArgoCD do its magic:  
-```bash
-rke2
-APPVAULT=$(kubectl get appvault -n astra-connector -o name | awk -F '/' '{print $2}')
-sed -i "s/ontap-s3-astra-ec85f45c-04db-4a92-b2d7-80d401affcdb/$APPVAULT/" ~/Repository/Astra/schedule.yaml
-git adcom "updated the appvault ID"
-git push
-```
-Check that the repo is up to date:
-<p align="center"><img src="Images/Gitea_repo_update.png"></p>
-
-Now, let's modify the ArgoCD CR to remove the exclude filter:  
-```bash
-$ rke1
-$ kubectl patch -n argocd application wordpress-protect --type=json -p='[{ "op": "remove", "path": "/spec/source/directory/exclude"}]'
-application.argoproj.io/wordpress-protect patched
-```
-
-And finally check that ArgoCD has performed a new sync:
-<p align="center"><img src="Images/ArgoCD_wordpress_protect_update.png" width="768"></p>
 
 From there, depending on the schedule configured, you will see snapshots & backups showing up:  
 ```bash
