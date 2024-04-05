@@ -5,6 +5,7 @@ metadata:
   namespace: wpargo
   labels:
     app: wordpress
+    tier: frontend
 spec:
   selector:
     matchLabels:

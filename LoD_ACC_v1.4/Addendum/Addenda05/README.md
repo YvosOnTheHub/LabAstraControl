@@ -12,7 +12,7 @@ The Astra toolkit can be installed in various methods:
 - it can be installed through the Python library
 - you can install it manually
 
-The easiest way, in the Lab on Demand, is to run it with Docker, as you dont need to install the prerequisites.  
+Let's first explore the Docker version, the local install will covered further down.  
 The following command will download the image if not already present, start the container & log you directly in the _apps_ folder.  
 Note that the toolkit version compatible with ACC 23.07 is the number 2.6.8 (or 2.6.8-minimal).  
 ```bash
@@ -58,6 +58,59 @@ $ actoolkit list clusters
 +---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
 | rke2          | 4136e7b2-83ae-486a-932c-5258f11dea93 | kubernetes    |            | running | managed        | unmanaged             |
 +---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
+```
+
+If you are using Astra Control 24.02, the recommmended toolkit version is 3.0.0.  
+For this one, let's see how to install it locally (on the _helper1_ host):
+```bash
+$ python3 -m pip install actoolkit
+$ pip install --upgrade actoolkit=3.0.0
+
+$ mkdir -p ~/.config/astra-toolkits/
+
+$ export ASTRA_ACCOUNTID=feb2b2c9-f3a7-4dec-a351-8ed73c0a44e0
+$ export ASTRA_APIKEY=BXiFzlBu6uqQV3PMauuYrd0tenljfzKuf_kuREgoMiI=
+
+$ cat <<EOT >> ~/.config/astra-toolkits/config.yaml
+headers:
+  Authorization: Bearer $ASTRA_APIKEY
+uid: $ASTRA_ACCOUNTID
+astra_project: astra.demo.netapp.com
+verifySSL: False
+EOT
+sed -i '/^$/d' ~/.config/astra-toolkits/config.yaml
+
+$ actoolkit list clusters
++---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
+| clusterName   | clusterID                            | clusterType   | location   | state   | managedState   | tridentStateAllowed   |
++===============+======================================+===============+============+=========+================+=======================+
+| rke2          | 4136e7b2-83ae-486a-932c-5258f11dea93 | kubernetes    |            | running | managed        | unmanaged             |
++---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
+| rke1          | 601ff60e-1fcb-4f69-be89-2a2c4ca5a715 | rke           |            | running | managed        | unmanaged             |
++---------------+--------------------------------------+---------------+------------+---------+----------------+-----------------------+
+```
+Also quite easy!  
+This version allows you to interact with the Astra Connector, & can be useful to build the YAML manifests you need.  
+
+Here is an example I used to create a IPR CR (InPlaceRestore).  
+The key options are _--dry-run_ and _--v3_:  
+```bash
+$  actoolkit --dry-run=client --v3 ipr --backup hourly-20595-20240404175000 wpargo --filterSelection include --filterSet version=v1,kind=PersistentVolumeClaim,name=mysql-pvc
+apiVersion: astra.netapp.io/v1
+kind: BackupInplaceRestore
+metadata:
+  name: backupipr-e96924d1-2ed7-4728-bb5d-ab60c3b97c0d
+  namespace: astra-connector
+spec:
+  appArchivePath: wpargo_5f874563-85e6-44d1-9317-1690a9110318/backups/hourly-20595-20240404175000_93c5ed60-4bbc-46b1-8b77-00358a876c8b
+  appVaultRef: rke2-appvault
+  resourceFilter:
+    resourceMatchers:
+    - kind: PersistentVolumeClaim
+      names:
+      - mysql-pvc
+      version: v1
+    resourceSelectionCriteria: include
 ```
 
 Tadaaa !

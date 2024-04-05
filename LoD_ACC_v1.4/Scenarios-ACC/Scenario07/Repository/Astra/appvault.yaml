@@ -8,7 +8,7 @@ spec:
   providerConfig:
     endpoint: s3.demo.netapp.com
     bucketName: astra
-    secure: "false"
+    skipCertValidation: "true"
   providerCredentials:
     accessKeyID:
       valueFromSecret:
