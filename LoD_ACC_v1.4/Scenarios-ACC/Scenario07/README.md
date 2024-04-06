@@ -101,7 +101,7 @@ Connect to the address assigned by the Load Balancer (_192.168.0.234_ in this ex
 You can even start your blog if you want.  
 
 Time to protect this application!  
-The repo also has 2 files in the App_manage folder to create the following Astra CR:
+The repo also has 2 files in the _App_manage_ folder to create the following Astra CR:
 - _application.yaml_ to define Wordpress as an application to manage with Astra  
 - _schedule.yaml_ to automatically take snapshots & backups  
 
